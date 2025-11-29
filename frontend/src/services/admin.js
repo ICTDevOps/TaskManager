@@ -39,5 +39,16 @@ export const adminService = {
       responseType: 'blob'
     });
     return response;
+  },
+
+  // Import methods for admin
+  async analyzeUserImport(userId, data) {
+    const response = await api.post(`/admin/users/${userId}/import/analyze`, data);
+    return response.data;
+  },
+
+  async applyUserImport(userId, data) {
+    const response = await api.post(`/admin/users/${userId}/import/apply`, data);
+    return response.data;
   }
 };

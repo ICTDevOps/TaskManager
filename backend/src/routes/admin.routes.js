@@ -8,6 +8,10 @@ const {
   deleteUser,
   exportUserTasks
 } = require('../controllers/admin.controller');
+const {
+  adminAnalyzeImport,
+  adminApplyImport
+} = require('../controllers/import.controller');
 const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
 
@@ -27,5 +31,9 @@ router.patch('/users/:id', updateUser);
 router.patch('/users/:id/password', changeUserPassword);
 router.delete('/users/:id', deleteUser);
 router.get('/users/:id/export', exportUserTasks);
+
+// Import de tâches pour un utilisateur
+router.post('/users/:id/import/analyze', adminAnalyzeImport);
+router.post('/users/:id/import/apply', adminApplyImport);
 
 module.exports = router;

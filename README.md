@@ -2,7 +2,7 @@
 
 Application de gestion de tâches multi-utilisateurs avec interface moderne, système de délégation, panneau d'administration et **serveur MCP** pour intégration avec les agents IA.
 
-**Version actuelle : 0.6**
+**Version actuelle : 0.7**
 
 ## Fonctionnalités
 
@@ -13,6 +13,7 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 - **Filtres avancés** : Par statut, priorité, catégorie + recherche textuelle
 - **Tri** : Par date d'échéance, priorité ou date de création
 - **Export** : Télécharger ses tâches en JSON ou XML
+- **Import** : Importer des tâches depuis un fichier JSON ou XML avec gestion des doublons (Nouveau v0.7)
 - **Paramètres** : Modifier son profil, email et mot de passe
 - **Thème** : Mode clair / Mode sombre
 
@@ -26,7 +27,7 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 ### Pour les administrateurs
 - **Dashboard** : Statistiques globales (utilisateurs, tâches, taux de complétion)
 - **Gestion utilisateurs** : Activer/désactiver, supprimer, promouvoir admin
-- **Actions avancées** : Changer le mot de passe d'un utilisateur, exporter ses tâches
+- **Actions avancées** : Changer le mot de passe d'un utilisateur, exporter/importer ses tâches
 - **Accès API** : Activer/désactiver l'accès API par utilisateur
 
 ### Intégration API & MCP (Nouveau v0.6)
@@ -110,8 +111,8 @@ Utiliser le fichier `docker-compose.synology.yml` qui contient :
 
 | Image | Tags |
 |-------|------|
-| `lordbadack/taskmanager-backend` | `0.6`, `0.5`, `0.4` |
-| `lordbadack/taskmanager-frontend` | `0.6`, `0.5`, `0.4` |
+| `lordbadack/taskmanager-backend` | `0.7`, `0.6`, `0.5` |
+| `lordbadack/taskmanager-frontend` | `0.7`, `0.6`, `0.5` |
 
 ## Compte administrateur par défaut
 

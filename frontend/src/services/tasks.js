@@ -46,5 +46,16 @@ export const tasksService = {
       responseType: 'blob'
     });
     return response;
+  },
+
+  // Import methods
+  async analyzeImport(data) {
+    const response = await api.post('/tasks/import/analyze', data);
+    return response.data;
+  },
+
+  async applyImport(data) {
+    const response = await api.post('/tasks/import/apply', data);
+    return response.data;
   }
 };

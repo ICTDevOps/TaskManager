@@ -49,15 +49,23 @@ export function useTasks() {
     setTasks(prev => prev.filter(t => t.id !== id));
   }, []);
 
-  const completeTask = useCallback(async (id) => {
+  const completeTask = useCallback(async (id, removeFromList = false) => {
     const data = await tasksService.completeTask(id);
-    setTasks(prev => prev.map(t => t.id === id ? data.task : t));
+    if (removeFromList) {
+      setTasks(prev => prev.filter(t => t.id !== id));
+    } else {
+      setTasks(prev => prev.map(t => t.id === id ? data.task : t));
+    }
     return data.task;
   }, []);
 
-  const reopenTask = useCallback(async (id) => {
+  const reopenTask = useCallback(async (id, removeFromList = false) => {
     const data = await tasksService.reopenTask(id);
-    setTasks(prev => prev.map(t => t.id === id ? data.task : t));
+    if (removeFromList) {
+      setTasks(prev => prev.filter(t => t.id !== id));
+    } else {
+      setTasks(prev => prev.map(t => t.id === id ? data.task : t));
+    }
     return data.task;
   }, []);
 

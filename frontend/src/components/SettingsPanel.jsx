@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { X, User, Mail, Lock, Download, Save, Eye, EyeOff, Key } from 'lucide-react';
+import { X, User, Mail, Lock, Download, Upload, Save, Eye, EyeOff, Key } from 'lucide-react';
 import { authService } from '../services/auth';
 import { tasksService } from '../services/tasks';
 import TokenManager from './TokenManager';
+import ImportModal from './ImportModal';
 
-export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
+export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onTasksRefresh }) {
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [showImportModal, setShowImportModal] = useState(false);
 
   // Profile form
   const [profileData, setProfileData] = useState({
@@ -127,7 +129,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
     { id: 'profile', label: 'Profil', icon: User },
     { id: 'email', label: 'Email', icon: Mail },
     { id: 'password', label: 'Mot de passe', icon: Lock },
-    { id: 'export', label: 'Export', icon: Download },
+    { id: 'data', label: 'Données', icon: Download },
     { id: 'api', label: 'API', icon: Key }
   ];
 
@@ -359,46 +361,63 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
             </form>
           )}
 
-          {/* Export Tab */}
-          {activeTab === 'export' && (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Exportez toutes vos tâches dans le format de votre choix.
-              </p>
+          {/* Data Tab (Export/Import) */}
+          {activeTab === 'data' && (
+            <div className="space-y-6">
+              {/* Export Section */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                  Exporter mes tâches
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Téléchargez toutes vos tâches dans le format de votre choix.
+                </p>
 
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => handleExport('json')}
-                  disabled={loading}
-                  className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary hover:bg-primary/5 transition disabled:opacity-50"
-                >
-                  <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                    <Download className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div className="text-center">
-                    <p className="font-medium text-gray-900 dark:text-white">JSON</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Format standard</p>
-                  </div>
-                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleExport('json')}
+                    disabled={loading}
+                    className="flex items-center justify-center gap-2 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary hover:bg-primary/5 transition disabled:opacity-50"
+                  >
+                    <Download className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <span className="font-medium text-gray-900 dark:text-white">JSON</span>
+                  </button>
 
-                <button
-                  onClick={() => handleExport('xml')}
-                  disabled={loading}
-                  className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary hover:bg-primary/5 transition disabled:opacity-50"
-                >
-                  <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Download className="h-6 w-6 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div className="text-center">
-                    <p className="font-medium text-gray-900 dark:text-white">XML</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Format universel</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => handleExport('xml')}
+                    disabled={loading}
+                    className="flex items-center justify-center gap-2 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary hover:bg-primary/5 transition disabled:opacity-50"
+                  >
+                    <Download className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <span className="font-medium text-gray-900 dark:text-white">XML</span>
+                  </button>
+                </div>
               </div>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
-                L'export inclut toutes vos tâches avec leurs catégories
-              </p>
+              {/* Separator */}
+              <div className="border-t border-gray-200 dark:border-gray-700" />
+
+              {/* Import Section */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                  Importer des tâches
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Importez des tâches depuis un fichier JSON ou XML exporté précédemment.
+                </p>
+
+                <button
+                  onClick={() => setShowImportModal(true)}
+                  className="w-full flex items-center justify-center gap-2 p-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition"
+                >
+                  <Upload className="h-5 w-5" />
+                  <span>Importer un fichier</span>
+                </button>
+
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+                  Les doublons seront détectés et vous pourrez choisir comment les gérer.
+                </p>
+              </div>
             </div>
           )}
 
@@ -448,6 +467,17 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
       {showTokenManager && (
         <TokenManager onClose={() => setShowTokenManager(false)} />
       )}
+
+      {/* Import Modal */}
+      <ImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onImportComplete={() => {
+          setShowImportModal(false);
+          showMessage('success', 'Import terminé avec succès');
+          if (onTasksRefresh) onTasksRefresh();
+        }}
+      />
     </div>
   );
 }

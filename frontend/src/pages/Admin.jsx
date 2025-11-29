@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import {
   Users, CheckSquare, BarChart3, LogOut, Search,
-  Shield, ShieldOff, UserX, UserCheck, Key, Download,
+  Shield, ShieldOff, UserX, UserCheck, Key, Download, Upload,
   Trash2, AlertTriangle, X, RefreshCw, Cpu
 } from 'lucide-react';
 import { adminService } from '../services/admin';
+import ImportModal from '../components/ImportModal';
 
 export default function Admin() {
   const { user, logout } = useAuth();
@@ -27,6 +28,10 @@ export default function Admin() {
   const [exportBeforeDelete, setExportBeforeDelete] = useState(true);
   const [modalLoading, setModalLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Import modal state
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importTargetUser, setImportTargetUser] = useState(null);
 
   useEffect(() => {
     if (user?.role !== 'admin') {
@@ -497,6 +502,14 @@ export default function Admin() {
                           </button>
 
                           <button
+                            onClick={() => { setImportTargetUser(u); setImportModalOpen(true); }}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                            title="Importer des tâches"
+                          >
+                            <Upload className="h-4 w-4 text-gray-500" />
+                          </button>
+
+                          <button
                             onClick={() => { setSelectedUser(u); setModalType('delete'); }}
                             className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
                             title="Supprimer"
@@ -622,6 +635,23 @@ export default function Admin() {
           </div>
         </div>
       )}
+
+      {/* Import Modal */}
+      <ImportModal
+        isOpen={importModalOpen}
+        onClose={() => {
+          setImportModalOpen(false);
+          setImportTargetUser(null);
+        }}
+        onImportComplete={() => {
+          setImportModalOpen(false);
+          setImportTargetUser(null);
+          showMessage('success', `Import terminé pour ${importTargetUser?.username}`);
+          loadData(); // Refresh stats
+        }}
+        targetUserId={importTargetUser?.id}
+        targetUserName={importTargetUser?.username}
+      />
     </div>
   );
 }

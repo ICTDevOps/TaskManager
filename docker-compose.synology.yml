@@ -36,7 +36,7 @@ services:
 
   # Backend API
   backend:
-    image: lordbadack/taskmanager-backend:0.6
+    image: lordbadack/taskmanager-backend:0.7
     container_name: taskmanager_backend
     restart: unless-stopped
     environment:
@@ -55,7 +55,7 @@ services:
 
   # Frontend (React + Nginx)
   frontend:
-    image: lordbadack/taskmanager-frontend:0.6
+    image: lordbadack/taskmanager-frontend:0.7
     container_name: taskmanager_frontend
     restart: unless-stopped
     depends_on:

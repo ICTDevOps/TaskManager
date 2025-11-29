@@ -10,6 +10,10 @@ const {
   getStats,
   exportTasks
 } = require('../controllers/tasks.controller');
+const {
+  analyzeImport,
+  applyImport
+} = require('../controllers/import.controller');
 const { hybridAuthMiddleware, checkPatPermission } = require('../middleware/pat');
 
 const router = express.Router();
@@ -22,6 +26,10 @@ router.get('/stats', checkPatPermission('canReadTasks'), getStats);
 
 // Export (lecture seule)
 router.get('/export', checkPatPermission('canReadTasks'), exportTasks);
+
+// Import (nécessite permission de création)
+router.post('/import/analyze', checkPatPermission('canCreateTasks'), analyzeImport);
+router.post('/import/apply', checkPatPermission('canCreateTasks'), applyImport);
 
 // CRUD avec vérification des permissions PAT
 router.get('/', checkPatPermission('canReadTasks'), getTasks);

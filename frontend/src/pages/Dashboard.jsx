@@ -48,7 +48,7 @@ export default function Dashboard() {
   const [currentPermissions, setCurrentPermissions] = useState(null);
 
   // Filters
-  const [status, setStatus] = useState('all');
+  const [status, setStatus] = useState('active');
   const [sortBy, setSortBy] = useState('created_at');
   const [sortOrder, setSortOrder] = useState('desc');
   const [search, setSearch] = useState('');
@@ -237,7 +237,8 @@ export default function Dashboard() {
 
   const handleCompleteTask = async (id) => {
     try {
-      await completeTask(id);
+      // Remove from list if filtering by 'active' status
+      await completeTask(id, status === 'active');
       addToast('Tâche terminée', 'success');
       if (currentContext === 'self') fetchStats();
     } catch (err) {
@@ -247,7 +248,8 @@ export default function Dashboard() {
 
   const handleReopenTask = async (id) => {
     try {
-      await reopenTask(id);
+      // Remove from list if filtering by 'completed' status
+      await reopenTask(id, status === 'completed');
       addToast('Tâche réouverte', 'success');
       if (currentContext === 'self') fetchStats();
     } catch (err) {
@@ -325,7 +327,7 @@ export default function Dashboard() {
     loadDelegations(); // Refresh delegations when closing
   };
 
-  const isSearching = search.length > 0 || status !== 'all' || categoryId !== '';
+  const isSearching = search.length > 0 || status !== 'active' || categoryId !== '';
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -460,6 +462,7 @@ export default function Dashboard() {
         onClose={() => setSettingsPanelOpen(false)}
         user={user}
         onUserUpdate={updateUser}
+        onTasksRefresh={loadTasks}
       />
 
       {/* Sharing panel */}
