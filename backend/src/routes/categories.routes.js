@@ -6,17 +6,34 @@ const {
   updateCategory,
   deleteCategory
 } = require('../controllers/categories.controller');
-const authMiddleware = require('../middleware/auth');
+const { hybridAuthMiddleware, checkPatPermission } = require('../middleware/pat');
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(authMiddleware);
+// All routes require authentication (JWT or PAT)
+router.use(hybridAuthMiddleware);
 
-router.get('/', getCategories);
-router.get('/:id', getCategory);
-router.post('/', createCategory);
-router.put('/:id', updateCategory);
-router.delete('/:id', deleteCategory);
+// Lecture des catégories
+router.get('/', checkPatPermission('canReadCategories'), getCategories);
+router.get('/:id', checkPatPermission('canReadCategories'), getCategory);
+
+// Création de catégorie
+router.post('/', checkPatPermission('canCreateCategories'), createCategory);
+
+// Modification et suppression (pas de permission PAT pour ça, JWT uniquement)
+// Les PAT ne peuvent pas modifier/supprimer des catégories pour des raisons de sécurité
+router.put('/:id', (req, res, next) => {
+  if (req.authMethod === 'pat') {
+    return res.status(403).json({ error: 'Les tokens API ne peuvent pas modifier les catégories.' });
+  }
+  next();
+}, updateCategory);
+
+router.delete('/:id', (req, res, next) => {
+  if (req.authMethod === 'pat') {
+    return res.status(403).json({ error: 'Les tokens API ne peuvent pas supprimer les catégories.' });
+  }
+  next();
+}, deleteCategory);
 
 module.exports = router;

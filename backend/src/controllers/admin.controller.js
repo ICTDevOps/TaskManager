@@ -5,7 +5,8 @@ const prisma = require('../config/database');
 // Validation schemas
 const updateUserSchema = z.object({
   role: z.enum(['user', 'admin']).optional(),
-  isActive: z.boolean().optional()
+  isActive: z.boolean().optional(),
+  canCreateApiTokens: z.boolean().optional()
 });
 
 const changePasswordSchema = z.object({
@@ -128,12 +129,14 @@ const getUsers = async (req, res, next) => {
         lastName: true,
         role: true,
         isActive: true,
+        canCreateApiTokens: true,
         createdAt: true,
         lastLoginAt: true,
         _count: {
           select: {
             tasks: true,
-            categories: true
+            categories: true,
+            apiTokens: true
           }
         }
       },
@@ -145,6 +148,7 @@ const getUsers = async (req, res, next) => {
         ...u,
         taskCount: u._count.tasks,
         categoryCount: u._count.categories,
+        apiTokenCount: u._count.apiTokens,
         _count: undefined
       }))
     });
@@ -166,12 +170,14 @@ const getUser = async (req, res, next) => {
         lastName: true,
         role: true,
         isActive: true,
+        canCreateApiTokens: true,
         createdAt: true,
         lastLoginAt: true,
         _count: {
           select: {
             tasks: true,
-            categories: true
+            categories: true,
+            apiTokens: true
           }
         }
       }
@@ -186,7 +192,15 @@ const getUser = async (req, res, next) => {
       return res.status(403).json({ error: 'Accès non autorisé.' });
     }
 
-    res.json({ user });
+    res.json({
+      user: {
+        ...user,
+        taskCount: user._count.tasks,
+        categoryCount: user._count.categories,
+        apiTokenCount: user._count.apiTokens,
+        _count: undefined
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -214,7 +228,8 @@ const updateUser = async (req, res, next) => {
       where: { id: req.params.id },
       data: {
         ...(data.role !== undefined && { role: data.role }),
-        ...(data.isActive !== undefined && { isActive: data.isActive })
+        ...(data.isActive !== undefined && { isActive: data.isActive }),
+        ...(data.canCreateApiTokens !== undefined && { canCreateApiTokens: data.canCreateApiTokens })
       },
       select: {
         id: true,
@@ -223,7 +238,8 @@ const updateUser = async (req, res, next) => {
         firstName: true,
         lastName: true,
         role: true,
-        isActive: true
+        isActive: true,
+        canCreateApiTokens: true
       }
     });
 

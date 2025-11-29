@@ -1,0 +1,14 @@
+{
+  "name": "taskmanager-mcp-bridge",
+  "version": "1.0.0",
+  "description": "Bridge MCP pour connecter Claude Desktop à TaskManager",
+  "main": "index.js",
+  "bin": {
+    "taskmanager-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -10,28 +10,28 @@ const {
   getStats,
   exportTasks
 } = require('../controllers/tasks.controller');
-const authMiddleware = require('../middleware/auth');
+const { hybridAuthMiddleware, checkPatPermission } = require('../middleware/pat');
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(authMiddleware);
+// All routes require authentication (JWT or PAT)
+router.use(hybridAuthMiddleware);
 
-// Stats
-router.get('/stats', getStats);
+// Stats (lecture seule)
+router.get('/stats', checkPatPermission('canReadTasks'), getStats);
 
-// Export
-router.get('/export', exportTasks);
+// Export (lecture seule)
+router.get('/export', checkPatPermission('canReadTasks'), exportTasks);
 
-// CRUD
-router.get('/', getTasks);
-router.get('/:id', getTask);
-router.post('/', createTask);
-router.put('/:id', updateTask);
-router.delete('/:id', deleteTask);
+// CRUD avec vérification des permissions PAT
+router.get('/', checkPatPermission('canReadTasks'), getTasks);
+router.get('/:id', checkPatPermission('canReadTasks'), getTask);
+router.post('/', checkPatPermission('canCreateTasks'), createTask);
+router.put('/:id', checkPatPermission('canUpdateTasks'), updateTask);
+router.delete('/:id', checkPatPermission('canDeleteTasks'), deleteTask);
 
-// Status actions
-router.patch('/:id/complete', completeTask);
-router.patch('/:id/reopen', reopenTask);
+// Status actions (considérées comme des updates)
+router.patch('/:id/complete', checkPatPermission('canUpdateTasks'), completeTask);
+router.patch('/:id/reopen', checkPatPermission('canUpdateTasks'), reopenTask);
 
 module.exports = router;

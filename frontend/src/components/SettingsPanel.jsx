@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { X, User, Mail, Lock, Download, Save, Eye, EyeOff } from 'lucide-react';
+import { X, User, Mail, Lock, Download, Save, Eye, EyeOff, Key } from 'lucide-react';
 import { authService } from '../services/auth';
 import { tasksService } from '../services/tasks';
+import TokenManager from './TokenManager';
 
 export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -29,6 +30,9 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
   });
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+
+  // Token Manager modal
+  const [showTokenManager, setShowTokenManager] = useState(false);
 
   const showMessage = (type, text) => {
     setMessage({ type, text });
@@ -123,7 +127,8 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
     { id: 'profile', label: 'Profil', icon: User },
     { id: 'email', label: 'Email', icon: Mail },
     { id: 'password', label: 'Mot de passe', icon: Lock },
-    { id: 'export', label: 'Export', icon: Download }
+    { id: 'export', label: 'Export', icon: Download },
+    { id: 'api', label: 'API', icon: Key }
   ];
 
   return (
@@ -396,8 +401,53 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate }) {
               </p>
             </div>
           )}
+
+          {/* API Tab */}
+          {activeTab === 'api' && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Créez des tokens API pour permettre à vos agents IA (N8N, Make, Claude, etc.) d'accéder à vos tâches.
+              </p>
+
+              {user?.canCreateApiTokens ? (
+                <button
+                  onClick={() => setShowTokenManager(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition"
+                >
+                  <Key className="h-5 w-5" />
+                  Gérer mes tokens API
+                </button>
+              ) : (
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    La création de tokens API n'est pas activée pour votre compte.
+                  </p>
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                    Contactez un administrateur pour activer cette fonctionnalité.
+                  </p>
+                </div>
+              )}
+
+              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+                  Comment ça marche ?
+                </h4>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                  <li>1. Créez un token avec les permissions souhaitées</li>
+                  <li>2. Copiez le token (il ne sera affiché qu'une fois)</li>
+                  <li>3. Configurez votre agent avec le token</li>
+                  <li>4. L'agent peut maintenant gérer vos tâches</li>
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Token Manager Modal */}
+      {showTokenManager && (
+        <TokenManager onClose={() => setShowTokenManager(false)} />
+      )}
     </div>
   );
 }

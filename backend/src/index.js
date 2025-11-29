@@ -10,6 +10,8 @@ const categoriesRoutes = require('./routes/categories.routes');
 const adminRoutes = require('./routes/admin.routes');
 const delegationRoutes = require('./routes/delegation.routes');
 const activityRoutes = require('./routes/activity.routes');
+const tokensRoutes = require('./routes/tokens.routes');
+const { setupMcpRoutes } = require('./mcp/server');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -33,7 +35,10 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Body parser
+// MCP Server routes (SSE) - AVANT le body parser pour que le stream reste lisible
+setupMcpRoutes(app);
+
+// Body parser (après MCP pour ne pas consommer le body)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -49,6 +54,7 @@ app.use('/api/v1/categories', categoriesRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/delegations', delegationRoutes);
 app.use('/api/v1/activity', activityRoutes);
+app.use('/api/v1/tokens', tokensRoutes);
 
 // 404 handler
 app.use((req, res) => {

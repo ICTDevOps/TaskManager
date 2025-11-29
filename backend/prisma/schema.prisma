@@ -38,6 +38,10 @@ model User {
   activityActed    ActivityLog[] @relation("ActivityActor")
   activityTargeted ActivityLog[] @relation("ActivityTarget")
 
+  // API Tokens
+  canCreateApiTokens Boolean    @default(false) @map("can_create_api_tokens")
+  apiTokens          ApiToken[]
+
   @@map("users")
 }
 
@@ -155,4 +159,40 @@ model ActivityLog {
   @@index([createdAt])
   @@index([ownerId, createdAt])
   @@map("activity_logs")
+}
+
+// Tokens API pour accès programmatique (agents IA, N8N, Make, etc.)
+model ApiToken {
+  id              String    @id @default(uuid())
+
+  // Propriétaire du token
+  userId          String    @map("user_id")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Identification
+  name            String                        // "Mon agent N8N", "Claude Desktop"
+  tokenHash       String    @unique @map("token_hash")  // Hash du token (jamais stocké en clair)
+  tokenPrefix     String    @map("token_prefix")        // "pat_bf0c..." pour identification visuelle
+
+  // Permissions sur les tâches
+  canReadTasks       Boolean @default(true) @map("can_read_tasks")
+  canCreateTasks     Boolean @default(false) @map("can_create_tasks")
+  canUpdateTasks     Boolean @default(false) @map("can_update_tasks")
+  canDeleteTasks     Boolean @default(false) @map("can_delete_tasks")
+
+  // Permissions sur les catégories
+  canReadCategories  Boolean @default(true) @map("can_read_categories")
+  canCreateCategories Boolean @default(false) @map("can_create_categories")
+
+  // Métadonnées
+  lastUsedAt      DateTime? @map("last_used_at")
+  lastUsedIp      String?   @map("last_used_ip")
+  expiresAt       DateTime? @map("expires_at")
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([isActive])
+  @@map("api_tokens")
 }

@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import {
   Users, CheckSquare, BarChart3, LogOut, Search,
   Shield, ShieldOff, UserX, UserCheck, Key, Download,
-  Trash2, AlertTriangle, X, RefreshCw
+  Trash2, AlertTriangle, X, RefreshCw, Cpu
 } from 'lucide-react';
 import { adminService } from '../services/admin';
 
@@ -73,6 +73,16 @@ export default function Admin() {
       await adminService.updateUser(userId, { isActive: !currentStatus });
       setUsers(users.map(u => u.id === userId ? { ...u, isActive: !currentStatus } : u));
       showMessage('success', currentStatus ? 'Utilisateur désactivé' : 'Utilisateur activé');
+    } catch (err) {
+      showMessage('error', err.response?.data?.error || 'Erreur');
+    }
+  };
+
+  const handleToggleApiAccess = async (userId, currentValue) => {
+    try {
+      await adminService.updateUser(userId, { canCreateApiTokens: !currentValue });
+      setUsers(users.map(u => u.id === userId ? { ...u, canCreateApiTokens: !currentValue } : u));
+      showMessage('success', currentValue ? 'Accès API désactivé' : 'Accès API activé');
     } catch (err) {
       showMessage('error', err.response?.data?.error || 'Erreur');
     }
@@ -389,6 +399,7 @@ export default function Admin() {
                     <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Rôle</th>
                     <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Statut</th>
                     <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tâches</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">API</th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -425,6 +436,23 @@ export default function Admin() {
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
                         {u.taskCount}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => handleToggleApiAccess(u.id, u.canCreateApiTokens)}
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition ${
+                            u.canCreateApiTokens
+                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          }`}
+                          title={u.canCreateApiTokens ? 'Désactiver accès API' : 'Activer accès API'}
+                        >
+                          <Cpu className="h-3 w-3" />
+                          {u.canCreateApiTokens ? 'Actif' : 'Inactif'}
+                          {u.apiTokenCount > 0 && (
+                            <span className="ml-1 text-xs">({u.apiTokenCount})</span>
+                          )}
+                        </button>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">

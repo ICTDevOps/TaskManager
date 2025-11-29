@@ -117,7 +117,8 @@ const login = async (req, res, next) => {
         themePreference: user.themePreference,
         role: user.role,
         mustChangePassword: user.mustChangePassword,
-        defaultContext: user.defaultContext
+        defaultContext: user.defaultContext,
+        canCreateApiTokens: user.canCreateApiTokens
       },
       token
     });

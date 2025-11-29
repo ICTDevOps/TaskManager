@@ -120,7 +120,7 @@ export default function Login() {
 
       {/* Footer */}
       <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>VnetConsult SRL &copy; 2025 - Version 0.4</p>
+        <p>VnetConsult SRL &copy; 2025 - Version 0.6</p>
       </footer>
     </div>
   );

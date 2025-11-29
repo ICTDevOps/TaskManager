@@ -23,7 +23,8 @@ const authMiddleware = async (req, res, next) => {
         themePreference: true,
         role: true,
         mustChangePassword: true,
-        isActive: true
+        isActive: true,
+        canCreateApiTokens: true
       }
     });
 

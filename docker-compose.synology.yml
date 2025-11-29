@@ -1,0 +1,74 @@
+# TaskManager - Docker Compose pour Synology
+# IP Synology: 192.168.0.8
+#
+# URLs:
+#   Frontend: http://192.168.0.8:8080
+#   Backend API: http://192.168.0.8:3000
+#   MCP HTTP Streamable: http://192.168.0.8:3000/mcp (recommandé)
+#   MCP SSE (legacy): http://192.168.0.8:3000/mcp/sse
+#
+# Déploiement:
+#   docker-compose -f docker-compose.synology.yml up -d
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: taskmanager_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: taskmanager_user
+      POSTGRES_PASSWORD: SecurePassword123!
+      POSTGRES_DB: taskmanager_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - taskmanager_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskmanager_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    image: lordbadack/taskmanager-backend:0.6
+    container_name: taskmanager_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://taskmanager_user:SecurePassword123!@db:5432/taskmanager_db
+      JWT_SECRET: VotreSecretJWTTresLongEtSecurise123!
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    networks:
+      - taskmanager_network
+
+  # Frontend (React + Nginx)
+  frontend:
+    image: lordbadack/taskmanager-frontend:0.6
+    container_name: taskmanager_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - taskmanager_network
+
+networks:
+  taskmanager_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
