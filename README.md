@@ -1,0 +1,345 @@
+# Task Manager v2.0
+
+Application de gestion de tâches multi-utilisateurs avec interface moderne, système de délégation et panneau d'administration.
+
+**Version actuelle : 0.4**
+
+## Fonctionnalités
+
+### Pour les utilisateurs
+- **Authentification** : Inscription et connexion (email ou nom d'utilisateur)
+- **Gestion des tâches** : Créer, modifier, supprimer, marquer comme complétées
+- **Catégories** : Organiser les tâches avec des catégories colorées personnalisées
+- **Filtres avancés** : Par statut, priorité, catégorie + recherche textuelle
+- **Tri** : Par date d'échéance, priorité ou date de création
+- **Export** : Télécharger ses tâches en JSON ou XML
+- **Paramètres** : Modifier son profil, email et mot de passe
+- **Thème** : Mode clair / Mode sombre
+
+### Délégation de tâches (Nouveau v2.0)
+- **Partage** : Inviter d'autres utilisateurs à gérer ses tâches
+- **Permissions granulaires** : Définir les droits (créer, modifier, supprimer, catégories)
+- **Catégories masquées** : Cacher certaines catégories aux délégués
+- **Contexte par défaut** : Choisir quel contexte afficher au login (ses tâches ou celles d'un owner)
+- **Journal d'activité** : Suivre les actions effectuées par les délégués
+
+### Pour les administrateurs
+- **Dashboard** : Statistiques globales (utilisateurs, tâches, taux de complétion)
+- **Gestion utilisateurs** : Activer/désactiver, supprimer, promouvoir admin
+- **Actions avancées** : Changer le mot de passe d'un utilisateur, exporter ses tâches
+
+## Technologies
+
+| Composant | Technologie |
+|-----------|-------------|
+| Frontend | React 18, Vite, Tailwind CSS, Lucide Icons |
+| Backend | Node.js, Express.js, Prisma ORM |
+| Base de données | PostgreSQL 15 |
+| Authentification | JWT, bcrypt |
+| Conteneurisation | Docker, Docker Compose |
+| Serveur web | Nginx (production) |
+
+## Prérequis
+
+- Docker et Docker Compose installés
+- Ports disponibles : 80 (frontend), 3000 (API), 5432 (PostgreSQL)
+
+## Installation
+
+### Option 1 : Développement local
+
+#### 1. Cloner le projet
+
+```bash
+git clone <repository-url>
+cd TaskManager
+```
+
+#### 2. Configuration de l'environnement
+
+Créer le fichier `.env` à la racine :
+
+```env
+# Database
+DB_USER=taskmanager_user
+DB_PASSWORD=SecurePassword123!
+DB_NAME=taskmanager_db
+DATABASE_URL=postgresql://taskmanager_user:SecurePassword123!@db:5432/taskmanager_db
+
+# Backend
+NODE_ENV=development
+JWT_SECRET=change_this_super_secret_key_in_production
+JWT_EXPIRES_IN=7d
+PORT=3000
+
+# Frontend
+VITE_API_URL=/api/v1
+```
+
+#### 3. Lancer l'application
+
+```bash
+docker-compose up --build -d
+```
+
+#### 4. Accéder à l'application
+
+- **Application** : http://localhost
+- **API** : http://localhost:3000/api/v1
+- **Admin** : http://localhost/admin/login
+
+### Option 2 : Déploiement Synology/Portainer
+
+Utiliser le fichier `docker-compose.portainer.yml` qui contient :
+- Images Docker pré-construites depuis Docker Hub (`lordbadack/taskmanager-*:0.4`)
+- Mots de passe et secrets générés
+- Migrations automatiques au démarrage
+- Seed automatique de l'admin
+
+## Images Docker Hub
+
+| Image | Tags |
+|-------|------|
+| `lordbadack/taskmanager-backend` | `0.4`, `latest` |
+| `lordbadack/taskmanager-frontend` | `0.4`, `latest` |
+
+## Compte administrateur par défaut
+
+| Champ | Valeur |
+|-------|--------|
+| Username | `admin` |
+| Password | `admin` |
+
+> **Important** : Le mot de passe doit être changé à la première connexion.
+
+## Structure du projet
+
+```
+TaskManager/
+├── backend/
+│   ├── prisma/
+│   │   ├── schema.prisma      # Modèle de données
+│   │   ├── seed.js            # Création admin par défaut
+│   │   └── migrations/        # Migrations SQL
+│   ├── src/
+│   │   ├── controllers/       # Logique métier
+│   │   │   ├── auth.controller.js
+│   │   │   ├── tasks.controller.js
+│   │   │   ├── categories.controller.js
+│   │   │   ├── admin.controller.js
+│   │   │   ├── delegation.controller.js
+│   │   │   └── activity.controller.js
+│   │   ├── routes/            # Définition des routes API
+│   │   ├── middleware/        # Middlewares (auth, admin)
+│   │   └── index.js           # Point d'entrée
+│   ├── Dockerfile
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/        # Composants réutilisables
+│   │   │   ├── Header.jsx
+│   │   │   ├── TaskCard.jsx
+│   │   │   ├── TaskModal.jsx
+│   │   │   ├── CategoryManager.jsx
+│   │   │   ├── SettingsPanel.jsx
+│   │   │   ├── SharingPanel.jsx
+│   │   │   ├── ContextSelector.jsx
+│   │   │   └── ActivityLogPanel.jsx
+│   │   ├── pages/             # Pages principales
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Admin.jsx
+│   │   │   ├── AdminLogin.jsx
+│   │   │   └── AdminChangePassword.jsx
+│   │   ├── services/          # Appels API
+│   │   ├── hooks/             # Hooks React personnalisés
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+├── docker-compose.yml              # Développement local
+├── docker-compose.portainer.yml    # Déploiement Synology/Portainer
+├── CHANGELOG.md
+└── README.md
+```
+
+## API Reference
+
+### Authentification
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/v1/auth/register` | Inscription |
+| POST | `/api/v1/auth/login` | Connexion |
+| GET | `/api/v1/auth/me` | Profil utilisateur |
+| PATCH | `/api/v1/auth/profile` | Modifier profil |
+| PATCH | `/api/v1/auth/email` | Modifier email |
+| PATCH | `/api/v1/auth/password` | Modifier mot de passe |
+| PATCH | `/api/v1/auth/default-context` | Définir contexte par défaut |
+
+### Tâches
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/tasks` | Liste des tâches |
+| POST | `/api/v1/tasks` | Créer une tâche |
+| PUT | `/api/v1/tasks/:id` | Modifier une tâche |
+| DELETE | `/api/v1/tasks/:id` | Supprimer une tâche |
+| PATCH | `/api/v1/tasks/:id/complete` | Marquer comme terminée |
+| PATCH | `/api/v1/tasks/:id/reopen` | Réouvrir une tâche |
+| GET | `/api/v1/tasks/export` | Exporter les tâches |
+
+**Paramètres de filtrage (GET /tasks)** :
+- `status` : `all` | `active` | `completed`
+- `priority` : `low` | `medium` | `high`
+- `categoryId` : UUID de la catégorie
+- `search` : Recherche textuelle
+- `sortBy` : `dueDate` | `priority` | `created_at`
+- `sortOrder` : `asc` | `desc`
+- `ownerId` : UUID du propriétaire (pour délégation)
+
+### Catégories
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/categories` | Liste des catégories |
+| POST | `/api/v1/categories` | Créer une catégorie |
+| PUT | `/api/v1/categories/:id` | Modifier une catégorie |
+| DELETE | `/api/v1/categories/:id` | Supprimer une catégorie |
+
+### Délégations
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/delegations` | Liste des délégations (données et reçues) |
+| POST | `/api/v1/delegations` | Créer une invitation |
+| PATCH | `/api/v1/delegations/:id` | Modifier les permissions |
+| DELETE | `/api/v1/delegations/:id` | Supprimer une délégation |
+| POST | `/api/v1/delegations/:id/accept` | Accepter une invitation |
+| POST | `/api/v1/delegations/:id/reject` | Refuser une invitation |
+| POST | `/api/v1/delegations/:id/leave` | Quitter une délégation |
+| GET | `/api/v1/delegations/search-users` | Rechercher des utilisateurs |
+
+### Journal d'activité
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/activity` | Historique des actions |
+
+### Administration (requiert rôle admin)
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/admin/stats` | Statistiques globales |
+| GET | `/api/v1/admin/users` | Liste des utilisateurs |
+| GET | `/api/v1/admin/users/:id` | Détail d'un utilisateur |
+| PATCH | `/api/v1/admin/users/:id` | Modifier rôle/statut |
+| PATCH | `/api/v1/admin/users/:id/password` | Changer mot de passe |
+| DELETE | `/api/v1/admin/users/:id` | Supprimer utilisateur |
+| GET | `/api/v1/admin/users/:id/export` | Exporter tâches utilisateur |
+
+## Modèle de données
+
+### User
+```prisma
+model User {
+  id                 String    @id @default(uuid())
+  email              String    @unique
+  username           String    @unique
+  passwordHash       String
+  firstName          String?
+  lastName           String?
+  themePreference    String    @default("light")
+  defaultContext     String    @default("self")
+  role               String    @default("user")
+  mustChangePassword Boolean   @default(false)
+  isActive           Boolean   @default(true)
+  tasks              Task[]
+  categories         Category[]
+  delegationsGiven   TaskDelegation[] @relation("Owner")
+  delegationsReceived TaskDelegation[] @relation("Delegate")
+  activityLogs       ActivityLog[]
+}
+```
+
+### TaskDelegation
+```prisma
+model TaskDelegation {
+  id                  String   @id @default(uuid())
+  ownerId             String
+  delegateId          String
+  canCreateTasks      Boolean  @default(false)
+  canEditTasks        Boolean  @default(false)
+  canDeleteTasks      Boolean  @default(false)
+  canCreateCategories Boolean  @default(false)
+  hiddenCategoryIds   String   @default("")
+  status              String   @default("pending")
+  owner               User     @relation("Owner")
+  delegate            User     @relation("Delegate")
+}
+```
+
+### ActivityLog
+```prisma
+model ActivityLog {
+  id            String   @id @default(uuid())
+  ownerId       String
+  actorId       String
+  targetOwnerId String?
+  action        String
+  entityType    String
+  entityId      String?
+  entityTitle   String
+  details       String?
+  createdAt     DateTime @default(now())
+}
+```
+
+## Commandes utiles
+
+```bash
+# Démarrer l'application
+docker-compose up -d
+
+# Arrêter l'application
+docker-compose down
+
+# Voir les logs
+docker-compose logs -f
+
+# Logs d'un service spécifique
+docker-compose logs -f backend
+
+# Reconstruire les images
+docker-compose up --build -d
+
+# Accéder au shell du backend
+docker-compose exec backend sh
+
+# Exécuter le seed admin
+docker-compose exec backend npx prisma db seed
+
+# Réinitialiser la base de données
+docker-compose exec backend npx prisma migrate reset
+```
+
+## Sécurité
+
+- Mots de passe hashés avec bcrypt (10 rounds)
+- Tokens JWT avec expiration (7 jours)
+- Validation des entrées avec Zod
+- Headers de sécurité (Helmet)
+- Protection CORS
+- Rate limiting sur l'authentification
+- Trust proxy pour reverse proxy (Nginx)
+- Compte admin protégé contre la suppression/désactivation
+
+## Auteur
+
+VnetConsult SRL - 2025
+
+## Licence
+
+MIT

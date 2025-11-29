@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  username              String    @unique
+  passwordHash          String    @map("password_hash")
+  firstName             String?   @map("first_name")
+  lastName              String?   @map("last_name")
+  avatarUrl             String?   @map("avatar_url")
+  themePreference       String    @default("light") @map("theme_preference")
+  language              String    @default("fr")
+  role                  String    @default("user")
+  mustChangePassword    Boolean   @default(false) @map("must_change_password")
+  defaultContext        String    @default("self") @map("default_context") // "self" ou UUID d'un owner
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  lastLoginAt           DateTime? @map("last_login_at")
+  isActive              Boolean   @default(true) @map("is_active")
+  emailVerified         Boolean   @default(false) @map("email_verified")
+
+  tasks      Task[]
+  categories Category[]
+
+  // Délégations
+  delegationsGiven    TaskDelegation[] @relation("DelegationsGiven")
+  delegationsReceived TaskDelegation[] @relation("DelegationsReceived")
+
+  // Journal d'activité
+  activityOwned    ActivityLog[] @relation("ActivityOwner")
+  activityActed    ActivityLog[] @relation("ActivityActor")
+  activityTargeted ActivityLog[] @relation("ActivityTarget")
+
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String
+  color     String   @default("#6366f1")
+  icon      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("categories")
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  categoryId  String?   @map("category_id")
+  title       String
+  description String?   @db.Text
+  importance  String    @default("normal")
+  status      String    @default("active")
+  dueDate     DateTime? @map("due_date") @db.Date
+  dueTime     String?   @map("due_time")
+  position    Int       @default(0)
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([importance])
+  @@index([categoryId])
+  @@index([userId, status])
+  @@map("tasks")
+}
+
+// Délégation de gestion des tâches entre utilisateurs
+model TaskDelegation {
+  id                  String   @id @default(uuid())
+
+  // Propriétaire des tâches (celui qui délègue)
+  ownerId             String   @map("owner_id")
+  owner               User     @relation("DelegationsGiven", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Délégué (celui qui reçoit les droits)
+  delegateId          String   @map("delegate_id")
+  delegate            User     @relation("DelegationsReceived", fields: [delegateId], references: [id], onDelete: Cascade)
+
+  // Permissions
+  canCreateTasks      Boolean  @default(false) @map("can_create_tasks")
+  canEditTasks        Boolean  @default(false) @map("can_edit_tasks")
+  canDeleteTasks      Boolean  @default(false) @map("can_delete_tasks")
+  canCreateCategories Boolean  @default(false) @map("can_create_categories")
+
+  // Catégories cachées (IDs séparés par des virgules)
+  hiddenCategoryIds   String   @default("") @map("hidden_category_ids")
+
+  // Statut de l'invitation
+  status              String   @default("pending") // pending, accepted, rejected
+
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@unique([ownerId, delegateId])
+  @@index([ownerId])
+  @@index([delegateId])
+  @@index([status])
+  @@map("task_delegations")
+}
+
+// Journal d'activité pour tracer les actions
+model ActivityLog {
+  id          String   @id @default(uuid())
+
+  // Propriétaire du journal (à qui appartient cette entrée de log)
+  ownerId     String   @map("owner_id")
+  owner       User     @relation("ActivityOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Qui a fait l'action
+  actorId     String   @map("actor_id")
+  actor       User     @relation("ActivityActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  // Pour qui l'action a été faite (si différent du owner du log)
+  // Ex: Pina crée une tâche pour Olivier -> dans le log de Pina, targetOwnerId = Olivier
+  targetOwnerId String?  @map("target_owner_id")
+  targetOwner   User?    @relation("ActivityTarget", fields: [targetOwnerId], references: [id], onDelete: SetNull)
+
+  // Type d'action
+  action      String   // created_task, updated_task, deleted_task, completed_task,
+                       // reopened_task, created_category, updated_category, deleted_category
+
+  // Entité concernée
+  entityType  String   @map("entity_type") // task, category
+  entityId    String?  @map("entity_id")
+  entityTitle String   @map("entity_title")
+
+  // Détails supplémentaires (JSON)
+  details     String?  @db.Text
+
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([ownerId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@index([ownerId, createdAt])
+  @@map("activity_logs")
+}

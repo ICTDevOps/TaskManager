@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: taskmanager_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: taskmanager
+      POSTGRES_PASSWORD: ad1a24dc14707c5e2200597f1d89e8a4
+      POSTGRES_DB: taskmanager_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - taskmanager_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskmanager -d taskmanager_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    image: lordbadack/taskmanager-backend:0.4
+    container_name: taskmanager_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://taskmanager:ad1a24dc14707c5e2200597f1d89e8a4@db:5432/taskmanager_db
+      JWT_SECRET: f7169d081b54ff53bb82d3a4c4fd5ce85041af9b10d2d516bef3d98fabdbb7c6
+      JWT_EXPIRES_IN: 7d
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && node src/index.js"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - taskmanager_network
+
+  # Frontend (React + Nginx)
+  frontend:
+    image: lordbadack/taskmanager-frontend:0.4
+    container_name: taskmanager_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - taskmanager_network
+
+networks:
+  taskmanager_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

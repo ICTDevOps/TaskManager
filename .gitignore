@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database
+postgres_data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+*.db
+
+# Zone Identifier (Windows)
+*:Zone.Identifier
