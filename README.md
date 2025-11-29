@@ -1,8 +1,8 @@
 # Task Manager v2.0
 
-Application de gestion de tâches multi-utilisateurs avec interface moderne, système de délégation et panneau d'administration.
+Application de gestion de tâches multi-utilisateurs avec interface moderne, système de délégation, panneau d'administration et **serveur MCP** pour intégration avec les agents IA.
 
-**Version actuelle : 0.4**
+**Version actuelle : 0.6**
 
 ## Fonctionnalités
 
@@ -27,6 +27,14 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 - **Dashboard** : Statistiques globales (utilisateurs, tâches, taux de complétion)
 - **Gestion utilisateurs** : Activer/désactiver, supprimer, promouvoir admin
 - **Actions avancées** : Changer le mot de passe d'un utilisateur, exporter ses tâches
+- **Accès API** : Activer/désactiver l'accès API par utilisateur
+
+### Intégration API & MCP (Nouveau v0.6)
+- **Personal Access Tokens (PAT)** : Créer des tokens API avec permissions granulaires
+- **Serveur MCP** : Intégration native avec les agents IA (N8N, Claude Desktop, etc.)
+- **HTTP Streamable** : Nouveau standard MCP (recommandé)
+- **SSE Transport** : Support legacy pour rétrocompatibilité
+- **Outils MCP** : tasks_list, tasks_create, tasks_update, tasks_complete, categories_list, etc.
 
 ## Technologies
 
@@ -35,7 +43,8 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 | Frontend | React 18, Vite, Tailwind CSS, Lucide Icons |
 | Backend | Node.js, Express.js, Prisma ORM |
 | Base de données | PostgreSQL 15 |
-| Authentification | JWT, bcrypt |
+| Authentification | JWT, bcrypt, PAT (Personal Access Tokens) |
+| MCP Server | @modelcontextprotocol/sdk v1.23.0 |
 | Conteneurisation | Docker, Docker Compose |
 | Serveur web | Nginx (production) |
 
@@ -90,18 +99,19 @@ docker-compose up --build -d
 
 ### Option 2 : Déploiement Synology/Portainer
 
-Utiliser le fichier `docker-compose.portainer.yml` qui contient :
-- Images Docker pré-construites depuis Docker Hub (`lordbadack/taskmanager-*:0.4`)
+Utiliser le fichier `docker-compose.synology.yml` qui contient :
+- Images Docker pré-construites depuis Docker Hub (`lordbadack/taskmanager-*:0.6`)
 - Mots de passe et secrets générés
 - Migrations automatiques au démarrage
 - Seed automatique de l'admin
+- Support MCP (HTTP Streamable + SSE)
 
 ## Images Docker Hub
 
 | Image | Tags |
 |-------|------|
-| `lordbadack/taskmanager-backend` | `0.4`, `latest` |
-| `lordbadack/taskmanager-frontend` | `0.4`, `latest` |
+| `lordbadack/taskmanager-backend` | `0.6`, `0.5`, `0.4` |
+| `lordbadack/taskmanager-frontend` | `0.6`, `0.5`, `0.4` |
 
 ## Compte administrateur par défaut
 
@@ -159,8 +169,13 @@ TaskManager/
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
+├── mcp-bridge/                     # Bridge MCP pour Claude Desktop
+│   ├── index.js                    # Bridge stdio → HTTP
+│   └── package.json
+├── docs/
+│   └── API-MCP-INTEGRATION.md      # Documentation API & MCP
 ├── docker-compose.yml              # Développement local
-├── docker-compose.portainer.yml    # Déploiement Synology/Portainer
+├── docker-compose.synology.yml     # Déploiement Synology/Portainer
 ├── CHANGELOG.md
 └── README.md
 ```
@@ -235,10 +250,53 @@ TaskManager/
 | GET | `/api/v1/admin/stats` | Statistiques globales |
 | GET | `/api/v1/admin/users` | Liste des utilisateurs |
 | GET | `/api/v1/admin/users/:id` | Détail d'un utilisateur |
-| PATCH | `/api/v1/admin/users/:id` | Modifier rôle/statut |
+| PATCH | `/api/v1/admin/users/:id` | Modifier rôle/statut/accès API |
 | PATCH | `/api/v1/admin/users/:id/password` | Changer mot de passe |
 | DELETE | `/api/v1/admin/users/:id` | Supprimer utilisateur |
 | GET | `/api/v1/admin/users/:id/export` | Exporter tâches utilisateur |
+
+### Tokens API (Personal Access Tokens)
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/tokens` | Liste des tokens de l'utilisateur |
+| POST | `/api/v1/tokens` | Créer un nouveau token |
+| DELETE | `/api/v1/tokens/:id` | Révoquer un token |
+
+**Permissions disponibles** :
+- `canReadTasks` - Lire les tâches
+- `canCreateTasks` - Créer des tâches
+- `canUpdateTasks` - Modifier des tâches
+- `canDeleteTasks` - Supprimer des tâches
+- `canReadCategories` - Lire les catégories
+- `canCreateCategories` - Créer des catégories
+
+### Serveur MCP
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/mcp` | HTTP Streamable - requêtes JSON-RPC |
+| GET | `/mcp` | HTTP Streamable - stream SSE (stateful) |
+| DELETE | `/mcp` | HTTP Streamable - fermer session |
+| GET | `/mcp/sse` | SSE legacy - connexion |
+| POST | `/mcp/messages` | SSE legacy - messages |
+| GET | `/mcp/info` | Informations serveur MCP |
+
+**Outils MCP disponibles** :
+
+| Outil | Description |
+|-------|-------------|
+| `tasks_list` | Liste les tâches avec filtres |
+| `tasks_get` | Détails d'une tâche |
+| `tasks_create` | Créer une tâche |
+| `tasks_update` | Modifier une tâche |
+| `tasks_complete` | Marquer comme terminée |
+| `tasks_reopen` | Réouvrir une tâche |
+| `tasks_delete` | Supprimer une tâche |
+| `categories_list` | Liste des catégories |
+| `categories_create` | Créer une catégorie |
+
+> **Documentation complète** : Voir [docs/API-MCP-INTEGRATION.md](docs/API-MCP-INTEGRATION.md)
 
 ## Modèle de données
 
@@ -329,12 +387,15 @@ docker-compose exec backend npx prisma migrate reset
 
 - Mots de passe hashés avec bcrypt (10 rounds)
 - Tokens JWT avec expiration (7 jours)
+- Personal Access Tokens (PAT) avec hash SHA-256
+- Permissions granulaires sur les tokens API
 - Validation des entrées avec Zod
 - Headers de sécurité (Helmet)
 - Protection CORS
 - Rate limiting sur l'authentification
 - Trust proxy pour reverse proxy (Nginx)
 - Compte admin protégé contre la suppression/désactivation
+- Audit des accès API (lastUsedAt, lastUsedIp)
 
 ## Auteur
 
