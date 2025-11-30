@@ -1,6 +1,8 @@
 # Task Manager v2.0
 
-Application de gestion de tâches multi-utilisateurs avec interface moderne, système de délégation, panneau d'administration et **serveur MCP** pour intégration avec les agents IA.
+Application de gestion de tâches multi-utilisateurs avec interface moderne, système de délégation et panneau d'administration.
+
+**Intègre un serveur MCP (Model Context Protocol)** permettant aux agents IA (Claude Desktop, N8N, etc.) de gérer vos tâches de manière autonome.
 
 **Version actuelle : 0.7**
 
@@ -400,7 +402,7 @@ docker-compose exec backend npx prisma migrate reset
 
 ## Auteur
 
-VnetConsult SRL - 2025
+**Olivier Malfroidt** - VnetConsult SRL - 2025
 
 ## Licence
 
