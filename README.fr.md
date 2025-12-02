@@ -6,8 +6,6 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 
 **Intègre un serveur MCP (Model Context Protocol)** permettant aux agents IA (Claude Desktop, N8N, etc.) de gérer vos tâches de manière autonome.
 
-**Version actuelle : 0.7**
-
 ## Fonctionnalités
 
 ### Pour les utilisateurs

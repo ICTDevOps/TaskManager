@@ -6,8 +6,6 @@ A multi-user task management application with a modern interface, delegation sys
 
 **Includes an MCP Server (Model Context Protocol)** enabling AI agents (Claude Desktop, N8N, etc.) to manage your tasks autonomously.
 
-**Current version: 0.7**
-
 ## Features
 
 ### For Users
