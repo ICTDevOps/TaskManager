@@ -1,0 +1,92 @@
+{
+  "title": "Paramètres du compte",
+  "tabs": {
+    "profile": "Profil",
+    "email": "Email",
+    "password": "Mot de passe",
+    "preferences": "Préférences",
+    "apiTokens": "Tokens API"
+  },
+  "profile": {
+    "title": "Informations personnelles",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Votre prénom",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Votre nom",
+    "username": "Nom d'utilisateur",
+    "usernameHint": "Le nom d'utilisateur ne peut pas être modifié",
+    "save": "Enregistrer le profil",
+    "success": "Profil mis à jour avec succès",
+    "error": "Erreur lors de la mise à jour du profil"
+  },
+  "email": {
+    "title": "Modifier l'email",
+    "current": "Email actuel",
+    "new": "Nouvel email",
+    "newPlaceholder": "nouveau@email.com",
+    "password": "Mot de passe actuel",
+    "passwordPlaceholder": "Pour confirmer le changement",
+    "passwordHint": "Entrez votre mot de passe pour confirmer",
+    "save": "Modifier l'email",
+    "success": "Email mis à jour avec succès",
+    "error": "Erreur lors de la modification de l'email"
+  },
+  "password": {
+    "title": "Modifier le mot de passe",
+    "current": "Mot de passe actuel",
+    "currentPlaceholder": "Votre mot de passe actuel",
+    "new": "Nouveau mot de passe",
+    "newPlaceholder": "Minimum 6 caractères",
+    "confirm": "Confirmer le nouveau mot de passe",
+    "confirmPlaceholder": "Retapez le nouveau mot de passe",
+    "save": "Modifier le mot de passe",
+    "success": "Mot de passe mis à jour avec succès",
+    "error": "Erreur lors de la modification du mot de passe",
+    "validation": {
+      "currentRequired": "Mot de passe actuel requis",
+      "newMin": "Le nouveau mot de passe doit contenir au moins 6 caractères",
+      "mismatch": "Les mots de passe ne correspondent pas"
+    }
+  },
+  "preferences": {
+    "title": "Préférences",
+    "theme": "Thème",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
+    "language": "Langue",
+    "defaultContext": "Contexte par défaut",
+    "defaultContextSelf": "Mes tâches",
+    "defaultContextHint": "Le contexte affiché à la connexion",
+    "success": "Préférences enregistrées",
+    "error": "Erreur lors de l'enregistrement"
+  },
+  "tokens": {
+    "title": "Tokens API (Personal Access Tokens)",
+    "description": "Créez des tokens pour accéder à l'API depuis des applications tierces (N8N, agents IA, etc.)",
+    "noAccess": "L'accès API n'est pas activé pour votre compte. Contactez un administrateur.",
+    "create": "Créer un token",
+    "name": "Nom du token",
+    "namePlaceholder": "Ex: Mon agent N8N",
+    "permissions": "Permissions",
+    "permissionsHint": "Sélectionnez les permissions accordées à ce token",
+    "canReadTasks": "Lire les tâches",
+    "canCreateTasks": "Créer des tâches",
+    "canUpdateTasks": "Modifier des tâches",
+    "canDeleteTasks": "Supprimer des tâches",
+    "canReadCategories": "Lire les catégories",
+    "canCreateCategories": "Créer des catégories",
+    "createButton": "Créer le token",
+    "copyToken": "Copier le token",
+    "tokenCopied": "Token copié !",
+    "tokenWarning": "Attention : ce token ne sera affiché qu'une seule fois. Copiez-le maintenant.",
+    "revoke": "Révoquer",
+    "revokeConfirm": "Êtes-vous sûr de vouloir révoquer ce token ?",
+    "lastUsed": "Dernière utilisation",
+    "never": "Jamais",
+    "created": "Token créé avec succès",
+    "revoked": "Token révoqué",
+    "error": "Erreur lors de la création du token",
+    "noTokens": "Aucun token API",
+    "noTokensDescription": "Créez un token pour accéder à l'API"
+  }
+}

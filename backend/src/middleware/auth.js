@@ -21,6 +21,7 @@ const authMiddleware = async (req, res, next) => {
         firstName: true,
         lastName: true,
         themePreference: true,
+        language: true,
         role: true,
         mustChangePassword: true,
         isActive: true,

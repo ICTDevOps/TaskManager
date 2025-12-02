@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import {
   Users, CheckSquare, BarChart3, LogOut, Search,
@@ -8,8 +9,10 @@ import {
 } from 'lucide-react';
 import { adminService } from '../services/admin';
 import ImportModal from '../components/ImportModal';
+import LanguageSelector from '../components/LanguageSelector';
 
 export default function Admin() {
+  const { t } = useTranslation(['admin']);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -51,7 +54,7 @@ export default function Admin() {
       setStats(statsData);
       setUsers(usersData.users);
     } catch (err) {
-      showMessage('error', 'Erreur lors du chargement des données');
+      showMessage('error', t('messages.loadError'));
     } finally {
       setLoading(false);
     }
@@ -67,9 +70,9 @@ export default function Admin() {
       const newRole = currentRole === 'admin' ? 'user' : 'admin';
       await adminService.updateUser(userId, { role: newRole });
       setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
-      showMessage('success', `Rôle mis à jour`);
+      showMessage('success', t('messages.roleUpdated'));
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur');
+      showMessage('error', err.response?.data?.error || t('messages.error'));
     }
   };
 
@@ -77,9 +80,9 @@ export default function Admin() {
     try {
       await adminService.updateUser(userId, { isActive: !currentStatus });
       setUsers(users.map(u => u.id === userId ? { ...u, isActive: !currentStatus } : u));
-      showMessage('success', currentStatus ? 'Utilisateur désactivé' : 'Utilisateur activé');
+      showMessage('success', currentStatus ? t('messages.userDeactivated') : t('messages.userActivated'));
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur');
+      showMessage('error', err.response?.data?.error || t('messages.error'));
     }
   };
 
@@ -87,24 +90,24 @@ export default function Admin() {
     try {
       await adminService.updateUser(userId, { canCreateApiTokens: !currentValue });
       setUsers(users.map(u => u.id === userId ? { ...u, canCreateApiTokens: !currentValue } : u));
-      showMessage('success', currentValue ? 'Accès API désactivé' : 'Accès API activé');
+      showMessage('success', currentValue ? t('messages.apiAccessDisabled') : t('messages.apiAccessEnabled'));
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur');
+      showMessage('error', err.response?.data?.error || t('messages.error'));
     }
   };
 
   const handleChangePassword = async () => {
     if (newPassword.length < 6) {
-      showMessage('error', 'Le mot de passe doit faire au moins 6 caractères');
+      showMessage('error', t('modals.changePassword.minLength'));
       return;
     }
     setModalLoading(true);
     try {
       await adminService.changeUserPassword(selectedUser.id, newPassword);
-      showMessage('success', 'Mot de passe modifié');
+      showMessage('success', t('modals.changePassword.success'));
       closeModal();
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur');
+      showMessage('error', err.response?.data?.error || t('modals.changePassword.error'));
     } finally {
       setModalLoading(false);
     }
@@ -129,11 +132,11 @@ export default function Admin() {
       }
 
       setUsers(users.filter(u => u.id !== selectedUser.id));
-      showMessage('success', 'Utilisateur supprimé');
+      showMessage('success', t('modals.deleteUser.success'));
       closeModal();
       loadData(); // Refresh stats
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur');
+      showMessage('error', err.response?.data?.error || t('modals.deleteUser.error'));
     } finally {
       setModalLoading(false);
     }
@@ -153,9 +156,9 @@ export default function Admin() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      showMessage('success', 'Export téléchargé');
+      showMessage('success', t('messages.exportSuccess'));
     } catch (err) {
-      showMessage('error', 'Erreur lors de l\'export');
+      showMessage('error', t('messages.exportError'));
     }
   };
 
@@ -198,7 +201,7 @@ export default function Admin() {
             <div className="flex items-center gap-3">
               <Shield className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Administration
+                {t('title')}
               </span>
             </div>
 
@@ -206,12 +209,13 @@ export default function Admin() {
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {user?.username}
               </span>
+              <LanguageSelector />
               <button
                 onClick={logout}
                 className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"
               >
                 <LogOut className="h-4 w-4" />
-                Déconnexion
+                {t('logout')}
               </button>
             </div>
           </div>
@@ -243,7 +247,7 @@ export default function Admin() {
             }`}
           >
             <BarChart3 className="h-4 w-4" />
-            Dashboard
+            {t('tabs.dashboard')}
           </button>
           <button
             onClick={() => setActiveTab('users')}
@@ -254,7 +258,7 @@ export default function Admin() {
             }`}
           >
             <Users className="h-4 w-4" />
-            Utilisateurs
+            {t('tabs.users')}
           </button>
         </div>
       </div>
@@ -271,10 +275,10 @@ export default function Admin() {
                     <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Utilisateurs</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('stats.totalUsers')}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.users.total}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {stats.users.active} actifs, {stats.users.inactive} inactifs
+                      {t('stats.activeInactive', { active: stats.users.active, inactive: stats.users.inactive })}
                     </p>
                   </div>
                 </div>
@@ -286,10 +290,10 @@ export default function Admin() {
                     <CheckSquare className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Tâches totales</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('stats.totalTasks')}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.tasks.total}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {stats.tasks.active} actives, {stats.tasks.completed} complétées
+                      {t('stats.activeCompleted', { active: stats.tasks.active, completed: stats.tasks.completed })}
                     </p>
                   </div>
                 </div>
@@ -301,7 +305,7 @@ export default function Admin() {
                     <BarChart3 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Taux de complétion</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('stats.completionRate')}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.tasks.completionRate}%</p>
                   </div>
                 </div>
@@ -313,7 +317,7 @@ export default function Admin() {
                     <CheckSquare className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Catégories</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('stats.categories')}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.categories.total}</p>
                   </div>
                 </div>
@@ -324,7 +328,7 @@ export default function Admin() {
             {stats.topUsers && stats.topUsers.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Top utilisateurs par nombre de tâches
+                  {t('topUsers.title')}
                 </h3>
                 <div className="space-y-3">
                   {stats.topUsers.map((u, index) => (
@@ -339,7 +343,7 @@ export default function Admin() {
                         </div>
                       </div>
                       <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {u.taskCount} tâches
+                        {t('topUsers.taskCount', { count: u.taskCount })}
                       </span>
                     </div>
                   ))}
@@ -360,7 +364,7 @@ export default function Admin() {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Rechercher un utilisateur..."
+                    placeholder={t('users.search')}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   />
                 </div>
@@ -370,9 +374,9 @@ export default function Admin() {
                   onChange={(e) => setFilterRole(e.target.value)}
                   className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
-                  <option value="all">Tous les rôles</option>
-                  <option value="user">Utilisateurs</option>
-                  <option value="admin">Administrateurs</option>
+                  <option value="all">{t('filters.allRoles')}</option>
+                  <option value="user">{t('filters.users')}</option>
+                  <option value="admin">{t('filters.admins')}</option>
                 </select>
 
                 <select
@@ -380,9 +384,9 @@ export default function Admin() {
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
-                  <option value="all">Tous les statuts</option>
-                  <option value="active">Actifs</option>
-                  <option value="inactive">Inactifs</option>
+                  <option value="all">{t('filters.allStatuses')}</option>
+                  <option value="active">{t('filters.active')}</option>
+                  <option value="inactive">{t('filters.inactive')}</option>
                 </select>
 
                 <button
@@ -399,13 +403,13 @@ export default function Admin() {
               <table className="w-full">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Utilisateur</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Rôle</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Statut</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tâches</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">API</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.user')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.email')}</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.role')}</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.status')}</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.tasks')}</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.apiAccess')}</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{t('users.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -427,7 +431,7 @@ export default function Admin() {
                             : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400'
                         }`}>
                           {u.role === 'admin' ? <Shield className="h-3 w-3" /> : null}
-                          {u.role === 'admin' ? 'Admin' : 'User'}
+                          {u.role === 'admin' ? t('users.roles.admin') : t('users.roles.user')}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -436,7 +440,7 @@ export default function Admin() {
                             ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                             : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                         }`}>
-                          {u.isActive ? 'Actif' : 'Inactif'}
+                          {u.isActive ? t('users.status.active') : t('users.status.inactive')}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
@@ -450,10 +454,10 @@ export default function Admin() {
                               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50'
                               : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
                           }`}
-                          title={u.canCreateApiTokens ? 'Désactiver accès API' : 'Activer accès API'}
+                          title={u.canCreateApiTokens ? t('users.apiAccess.disable') : t('users.apiAccess.enable')}
                         >
                           <Cpu className="h-3 w-3" />
-                          {u.canCreateApiTokens ? 'Actif' : 'Inactif'}
+                          {u.canCreateApiTokens ? t('users.apiAccess.enabled') : t('users.apiAccess.disabled')}
                           {u.apiTokenCount > 0 && (
                             <span className="ml-1 text-xs">({u.apiTokenCount})</span>
                           )}
@@ -464,7 +468,7 @@ export default function Admin() {
                           <button
                             onClick={() => handleToggleRole(u.id, u.role)}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-                            title={u.role === 'admin' ? 'Rétrograder en user' : 'Promouvoir admin'}
+                            title={u.role === 'admin' ? t('users.actions.demoteAdmin') : t('users.actions.promoteAdmin')}
                           >
                             {u.role === 'admin' ? (
                               <ShieldOff className="h-4 w-4 text-gray-500" />
@@ -476,7 +480,7 @@ export default function Admin() {
                           <button
                             onClick={() => handleToggleStatus(u.id, u.isActive)}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-                            title={u.isActive ? 'Désactiver' : 'Activer'}
+                            title={u.isActive ? t('users.actions.deactivate') : t('users.actions.activate')}
                           >
                             {u.isActive ? (
                               <UserX className="h-4 w-4 text-gray-500" />
@@ -488,7 +492,7 @@ export default function Admin() {
                           <button
                             onClick={() => { setSelectedUser(u); setModalType('password'); }}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-                            title="Changer mot de passe"
+                            title={t('users.actions.changePassword')}
                           >
                             <Key className="h-4 w-4 text-gray-500" />
                           </button>
@@ -496,7 +500,7 @@ export default function Admin() {
                           <button
                             onClick={() => handleExportUserTasks(u.id, u.username, 'json')}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-                            title="Exporter les tâches"
+                            title={t('users.actions.exportTasks')}
                           >
                             <Download className="h-4 w-4 text-gray-500" />
                           </button>
@@ -504,7 +508,7 @@ export default function Admin() {
                           <button
                             onClick={() => { setImportTargetUser(u); setImportModalOpen(true); }}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-                            title="Importer des tâches"
+                            title={t('users.actions.importTasks')}
                           >
                             <Upload className="h-4 w-4 text-gray-500" />
                           </button>
@@ -512,7 +516,7 @@ export default function Admin() {
                           <button
                             onClick={() => { setSelectedUser(u); setModalType('delete'); }}
                             className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
-                            title="Supprimer"
+                            title={t('users.actions.delete')}
                           >
                             <Trash2 className="h-4 w-4 text-red-500" />
                           </button>
@@ -525,7 +529,7 @@ export default function Admin() {
 
               {filteredUsers.length === 0 && (
                 <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                  Aucun utilisateur trouvé
+                  {t('users.noUsers')}
                 </div>
               )}
             </div>
@@ -539,7 +543,7 @@ export default function Admin() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Changer le mot de passe
+                {t('modals.changePassword.title')}
               </h3>
               <button onClick={closeModal} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                 <X className="h-5 w-5 text-gray-500" />
@@ -548,19 +552,19 @@ export default function Admin() {
 
             <div className="p-4 space-y-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Définir un nouveau mot de passe pour <strong>{selectedUser.username}</strong>
+                {t('modals.changePassword.subtitle')} <strong>{selectedUser.username}</strong>
               </p>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Nouveau mot de passe
+                  {t('modals.changePassword.newPassword')}
                 </label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                  placeholder="Minimum 6 caractères"
+                  placeholder={t('modals.changePassword.newPasswordPlaceholder')}
                 />
               </div>
 
@@ -569,14 +573,14 @@ export default function Admin() {
                   onClick={closeModal}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                 >
-                  Annuler
+                  {t('modals.changePassword.cancel')}
                 </button>
                 <button
                   onClick={handleChangePassword}
                   disabled={modalLoading}
                   className="flex-1 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition disabled:opacity-50"
                 >
-                  {modalLoading ? 'Modification...' : 'Modifier'}
+                  {modalLoading ? t('modals.changePassword.submitting') : t('modals.changePassword.submit')}
                 </button>
               </div>
             </div>
@@ -591,7 +595,7 @@ export default function Admin() {
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-red-500" />
-                Supprimer l'utilisateur
+                {t('modals.deleteUser.title')}
               </h3>
               <button onClick={closeModal} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                 <X className="h-5 w-5 text-gray-500" />
@@ -600,8 +604,8 @@ export default function Admin() {
 
             <div className="p-4 space-y-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{selectedUser.username}</strong> ?
-                Cette action est irréversible et supprimera toutes ses tâches et catégories.
+                {t('modals.deleteUser.message')} <strong>{selectedUser.username}</strong> ?
+                {' '}{t('modals.deleteUser.warning')}
               </p>
 
               <label className="flex items-center gap-2">
@@ -612,7 +616,7 @@ export default function Admin() {
                   className="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">
-                  Exporter les tâches avant suppression
+                  {t('modals.deleteUser.exportFirst')}
                 </span>
               </label>
 
@@ -621,14 +625,14 @@ export default function Admin() {
                   onClick={closeModal}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                 >
-                  Annuler
+                  {t('modals.deleteUser.cancel')}
                 </button>
                 <button
                   onClick={handleDeleteUser}
                   disabled={modalLoading}
                   className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition disabled:opacity-50"
                 >
-                  {modalLoading ? 'Suppression...' : 'Supprimer'}
+                  {modalLoading ? t('modals.deleteUser.submitting') : t('modals.deleteUser.submit')}
                 </button>
               </div>
             </div>
@@ -646,7 +650,7 @@ export default function Admin() {
         onImportComplete={() => {
           setImportModalOpen(false);
           setImportTargetUser(null);
-          showMessage('success', `Import terminé pour ${importTargetUser?.username}`);
+          showMessage('success', t('messages.importSuccess', { username: importTargetUser?.username }));
           loadData(); // Refresh stats
         }}
         targetUserId={importTargetUser?.id}

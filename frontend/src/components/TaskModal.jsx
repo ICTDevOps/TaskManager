@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { X } from 'lucide-react'
 
 export default function TaskModal({ isOpen, onClose, onSubmit, task, categories = [] }) {
+  const { t } = useTranslation(['tasks', 'common'])
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -50,8 +52,8 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
     setError('');
 
     if (!formData.title.trim()) {
-      setError('Le titre est requis');
-      return;
+      setError(t('form.titleRequired'))
+      return
     }
 
     setLoading(true);
@@ -64,7 +66,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
       });
       onClose();
     } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue');
+      setError(err.response?.data?.error || t('common:errors.generic'))
     } finally {
       setLoading(false);
     }
@@ -78,7 +80,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {isEditing ? 'Modifier la tâche' : 'Nouvelle tâche'}
+            {isEditing ? t('edit') : t('create')}
           </h2>
           <button
             onClick={onClose}
@@ -98,7 +100,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
 
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Titre *
+              {t('form.title')} *
             </label>
             <input
               id="title"
@@ -108,13 +110,13 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-              placeholder="Titre de la tâche"
+              placeholder={t('form.titlePlaceholder')}
             />
           </div>
 
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Description
+              {t('form.description')}
             </label>
             <textarea
               id="description"
@@ -123,14 +125,14 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
               onChange={handleChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition resize-none"
-              placeholder="Description de la tâche (optionnel)"
+              placeholder={t('form.descriptionPlaceholder')}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Catégorie
+                {t('form.category')}
               </label>
               <select
                 id="categoryId"
@@ -139,7 +141,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
               >
-                <option value="">Aucune</option>
+                <option value="">{t('form.categoryNone')}</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
@@ -150,7 +152,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
 
             <div>
               <label htmlFor="importance" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Importance
+                {t('form.importance')}
               </label>
               <select
                 id="importance"
@@ -159,9 +161,9 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
               >
-                <option value="low">Faible</option>
-                <option value="normal">Normal</option>
-                <option value="high">Élevée</option>
+                <option value="low">{t('importance.low')}</option>
+                <option value="normal">{t('importance.normal')}</option>
+                <option value="high">{t('importance.high')}</option>
               </select>
             </div>
           </div>
@@ -169,7 +171,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Date d'échéance
+                {t('form.dueDate')}
               </label>
               <input
                 id="dueDate"
@@ -183,7 +185,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
 
             <div>
               <label htmlFor="dueTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Heure
+                {t('form.dueTime')}
               </label>
               <input
                 id="dueTime"
@@ -203,7 +205,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             >
-              Annuler
+              {t('common:cancel')}
             </button>
             <button
               type="submit"
@@ -213,7 +215,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit, task, categories 
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               ) : (
-                isEditing ? 'Modifier' : 'Créer'
+                isEditing ? t('form.updateButton') : t('form.createButton')
               )}
             </button>
           </div>

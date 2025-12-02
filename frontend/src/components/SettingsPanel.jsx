@@ -1,137 +1,139 @@
-import { useState } from 'react';
-import { X, User, Mail, Lock, Download, Upload, Save, Eye, EyeOff, Key } from 'lucide-react';
-import { authService } from '../services/auth';
-import { tasksService } from '../services/tasks';
-import TokenManager from './TokenManager';
-import ImportModal from './ImportModal';
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { X, User, Mail, Lock, Download, Upload, Save, Eye, EyeOff, Key } from 'lucide-react'
+import { authService } from '../services/auth'
+import { tasksService } from '../services/tasks'
+import TokenManager from './TokenManager'
+import ImportModal from './ImportModal'
 
 export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onTasksRefresh }) {
-  const [activeTab, setActiveTab] = useState('profile');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const [showImportModal, setShowImportModal] = useState(false);
+  const { t } = useTranslation(['settings', 'common'])
+  const [activeTab, setActiveTab] = useState('profile')
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState({ type: '', text: '' })
+  const [showImportModal, setShowImportModal] = useState(false)
 
   // Profile form
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || ''
-  });
+  })
 
   // Email form
   const [emailData, setEmailData] = useState({
     newEmail: user?.email || '',
     password: ''
-  });
-  const [showEmailPassword, setShowEmailPassword] = useState(false);
+  })
+  const [showEmailPassword, setShowEmailPassword] = useState(false)
 
   // Password form
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
-  });
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
+  })
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
 
   // Token Manager modal
-  const [showTokenManager, setShowTokenManager] = useState(false);
+  const [showTokenManager, setShowTokenManager] = useState(false)
 
   const showMessage = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: '', text: '' }), 5000);
-  };
+    setMessage({ type, text })
+    setTimeout(() => setMessage({ type: '', text: '' }), 5000)
+  }
 
   // Update profile (firstName, lastName)
   const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
     try {
-      const { user: updatedUser } = await authService.updateProfile(profileData);
-      onUserUpdate(updatedUser);
-      showMessage('success', 'Profil mis à jour avec succès');
+      const { user: updatedUser } = await authService.updateProfile(profileData)
+      onUserUpdate(updatedUser)
+      showMessage('success', t('profile.success'))
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur lors de la mise à jour');
+      showMessage('error', err.response?.data?.error || t('profile.error'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Update email
   const handleUpdateEmail = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!emailData.password) {
-      showMessage('error', 'Mot de passe requis pour confirmer');
-      return;
+      showMessage('error', t('password.validation.currentRequired'))
+      return
     }
-    setLoading(true);
+    setLoading(true)
     try {
-      const { user: updatedUser } = await authService.updateEmail(emailData.newEmail, emailData.password);
-      onUserUpdate(updatedUser);
-      setEmailData(prev => ({ ...prev, password: '' }));
-      showMessage('success', 'Email mis à jour avec succès');
+      const { user: updatedUser } = await authService.updateEmail(emailData.newEmail, emailData.password)
+      onUserUpdate(updatedUser)
+      setEmailData(prev => ({ ...prev, password: '' }))
+      showMessage('success', t('email.success'))
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur lors de la mise à jour');
+      showMessage('error', err.response?.data?.error || t('email.error'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Update password
   const handleUpdatePassword = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showMessage('error', 'Les mots de passe ne correspondent pas');
-      return;
+      showMessage('error', t('password.validation.mismatch'))
+      return
     }
     if (passwordData.newPassword.length < 6) {
-      showMessage('error', 'Le nouveau mot de passe doit faire au moins 6 caractères');
-      return;
+      showMessage('error', t('password.validation.newMin'))
+      return
     }
-    setLoading(true);
+    setLoading(true)
     try {
-      await authService.updatePassword(passwordData.currentPassword, passwordData.newPassword);
-      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      showMessage('success', 'Mot de passe mis à jour avec succès');
+      await authService.updatePassword(passwordData.currentPassword, passwordData.newPassword)
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      showMessage('success', t('password.success'))
     } catch (err) {
-      showMessage('error', err.response?.data?.error || 'Erreur lors de la mise à jour');
+      showMessage('error', err.response?.data?.error || t('password.error'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Export tasks
   const handleExport = async (format) => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const response = await tasksService.exportTasks(format);
+      const response = await tasksService.exportTasks(format)
       const blob = new Blob([response.data], {
         type: format === 'xml' ? 'application/xml' : 'application/json'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `tasks-export-${new Date().toISOString().split('T')[0]}.${format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      showMessage('success', `Export ${format.toUpperCase()} téléchargé`);
+      })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `tasks-export-${new Date().toISOString().split('T')[0]}.${format}`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      showMessage('success', t('tasks:export.success'))
     } catch (err) {
-      showMessage('error', 'Erreur lors de l\'export');
+      showMessage('error', t('tasks:export.error'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const tabs = [
-    { id: 'profile', label: 'Profil', icon: User },
-    { id: 'email', label: 'Email', icon: Mail },
-    { id: 'password', label: 'Mot de passe', icon: Lock },
-    { id: 'data', label: 'Données', icon: Download },
+    { id: 'profile', label: t('tabs.profile'), icon: User },
+    { id: 'email', label: t('tabs.email'), icon: Mail },
+    { id: 'password', label: t('tabs.password'), icon: Lock },
+    { id: 'data', label: 'Data', icon: Download },
     { id: 'api', label: 'API', icon: Key }
-  ];
+  ]
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -139,7 +141,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Paramètres
+            {t('title')}
           </h2>
           <button
             onClick={onClose}
@@ -150,12 +152,12 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 dark:border-gray-700">
+        <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition ${
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-3 text-sm font-medium transition whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
@@ -185,33 +187,33 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Prénom
+                  {t('profile.firstName')}
                 </label>
                 <input
                   type="text"
                   value={profileData.firstName}
                   onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="Votre prénom"
+                  placeholder={t('profile.firstNamePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Nom
+                  {t('profile.lastName')}
                 </label>
                 <input
                   type="text"
                   value={profileData.lastName}
                   onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="Votre nom"
+                  placeholder={t('profile.lastNamePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Nom d'utilisateur
+                  {t('profile.username')}
                 </label>
                 <input
                   type="text"
@@ -220,7 +222,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Le nom d'utilisateur ne peut pas être modifié
+                  {t('profile.usernameHint')}
                 </p>
               </div>
 
@@ -230,7 +232,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                 className="w-full px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <Save className="h-4 w-4" />
-                Enregistrer
+                {t('profile.save')}
               </button>
             </form>
           )}
@@ -240,21 +242,21 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
             <form onSubmit={handleUpdateEmail} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Nouvelle adresse email
+                  {t('email.new')}
                 </label>
                 <input
                   type="email"
                   value={emailData.newEmail}
                   onChange={(e) => setEmailData(prev => ({ ...prev, newEmail: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="nouvelle@email.com"
+                  placeholder={t('email.newPlaceholder')}
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Mot de passe actuel (pour confirmer)
+                  {t('email.password')}
                 </label>
                 <div className="relative">
                   <input
@@ -262,7 +264,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                     value={emailData.password}
                     onChange={(e) => setEmailData(prev => ({ ...prev, password: e.target.value }))}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                    placeholder="Votre mot de passe"
+                    placeholder={t('email.passwordPlaceholder')}
                     required
                   />
                   <button
@@ -281,7 +283,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                 className="w-full px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <Save className="h-4 w-4" />
-                Modifier l'email
+                {t('email.save')}
               </button>
             </form>
           )}
@@ -291,7 +293,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
             <form onSubmit={handleUpdatePassword} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Mot de passe actuel
+                  {t('password.current')}
                 </label>
                 <div className="relative">
                   <input
@@ -299,7 +301,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                    placeholder="Mot de passe actuel"
+                    placeholder={t('password.currentPlaceholder')}
                     required
                   />
                   <button
@@ -314,7 +316,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Nouveau mot de passe
+                  {t('password.new')}
                 </label>
                 <div className="relative">
                   <input
@@ -322,7 +324,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                    placeholder="Nouveau mot de passe (min. 6 caractères)"
+                    placeholder={t('password.newPlaceholder')}
                     required
                     minLength={6}
                   />
@@ -338,14 +340,14 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Confirmer le nouveau mot de passe
+                  {t('password.confirm')}
                 </label>
                 <input
                   type="password"
                   value={passwordData.confirmPassword}
                   onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="Confirmez le nouveau mot de passe"
+                  placeholder={t('password.confirmPlaceholder')}
                   required
                 />
               </div>
@@ -356,7 +358,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                 className="w-full px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <Lock className="h-4 w-4" />
-                Modifier le mot de passe
+                {t('password.save')}
               </button>
             </form>
           )}
@@ -367,10 +369,10 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
               {/* Export Section */}
               <div>
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                  Exporter mes tâches
+                  {t('tasks:export.title')}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  Téléchargez toutes vos tâches dans le format de votre choix.
+                  {t('tasks:export.title')}
                 </p>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -400,10 +402,10 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
               {/* Import Section */}
               <div>
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                  Importer des tâches
+                  {t('tasks:import.title')}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  Importez des tâches depuis un fichier JSON ou XML exporté précédemment.
+                  {t('tasks:import.selectFileDescription')}
                 </p>
 
                 <button
@@ -411,12 +413,8 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                   className="w-full flex items-center justify-center gap-2 p-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition"
                 >
                   <Upload className="h-5 w-5" />
-                  <span>Importer un fichier</span>
+                  <span>{t('tasks:import.selectFile')}</span>
                 </button>
-
-                <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
-                  Les doublons seront détectés et vous pourrez choisir comment les gérer.
-                </p>
               </div>
             </div>
           )}
@@ -425,7 +423,7 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
           {activeTab === 'api' && (
             <div className="space-y-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Créez des tokens API pour permettre à vos agents IA (N8N, Make, Claude, etc.) d'accéder à vos tâches.
+                {t('tokens.description')}
               </p>
 
               {user?.canCreateApiTokens ? (
@@ -434,30 +432,15 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition"
                 >
                   <Key className="h-5 w-5" />
-                  Gérer mes tokens API
+                  {t('tokens.title')}
                 </button>
               ) : (
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                   <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    La création de tokens API n'est pas activée pour votre compte.
-                  </p>
-                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                    Contactez un administrateur pour activer cette fonctionnalité.
+                    {t('tokens.noAccess')}
                   </p>
                 </div>
               )}
-
-              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                  Comment ça marche ?
-                </h4>
-                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                  <li>1. Créez un token avec les permissions souhaitées</li>
-                  <li>2. Copiez le token (il ne sera affiché qu'une fois)</li>
-                  <li>3. Configurez votre agent avec le token</li>
-                  <li>4. L'agent peut maintenant gérer vos tâches</li>
-                </ul>
-              </div>
             </div>
           )}
         </div>
@@ -473,11 +456,11 @@ export default function SettingsPanel({ isOpen, onClose, user, onUserUpdate, onT
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
         onImportComplete={() => {
-          setShowImportModal(false);
-          showMessage('success', 'Import terminé avec succès');
-          if (onTasksRefresh) onTasksRefresh();
+          setShowImportModal(false)
+          showMessage('success', t('tasks:import.success'))
+          if (onTasksRefresh) onTasksRefresh()
         }}
       />
     </div>
-  );
+  )
 }

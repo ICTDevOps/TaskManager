@@ -1,0 +1,119 @@
+{
+  "title": "Mes tâches",
+  "titleFor": "Tâches de {{name}}",
+  "create": "Nouvelle tâche",
+  "edit": "Modifier la tâche",
+  "delete": "Supprimer la tâche",
+  "complete": "Terminer",
+  "reopen": "Réouvrir",
+  "noTasks": "Aucune tâche",
+  "noTasksDescription": "Créez votre première tâche pour commencer",
+  "noResults": "Aucun résultat",
+  "noResultsDescription": "Aucune tâche ne correspond à vos critères de recherche",
+  "clearFilters": "Effacer les filtres",
+  "form": {
+    "title": "Titre",
+    "titlePlaceholder": "Titre de la tâche",
+    "titleRequired": "Le titre est requis",
+    "description": "Description",
+    "descriptionPlaceholder": "Description de la tâche (optionnel)",
+    "category": "Catégorie",
+    "categoryNone": "Sans catégorie",
+    "importance": "Importance",
+    "dueDate": "Date d'échéance",
+    "dueTime": "Heure",
+    "createButton": "Créer la tâche",
+    "updateButton": "Modifier la tâche"
+  },
+  "importance": {
+    "low": "Faible",
+    "normal": "Normal",
+    "high": "Élevée"
+  },
+  "status": {
+    "all": "Toutes",
+    "active": "Actives",
+    "completed": "Complétées"
+  },
+  "sort": {
+    "label": "Trier par",
+    "createdAt": "Date de création",
+    "dueDate": "Date d'échéance",
+    "importance": "Importance",
+    "title": "Titre",
+    "asc": "Croissant",
+    "desc": "Décroissant"
+  },
+  "filter": {
+    "search": "Rechercher une tâche...",
+    "status": "Statut",
+    "importance": "Importance",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "allImportance": "Toutes"
+  },
+  "stats": {
+    "active": "Actives",
+    "completed": "Complétées",
+    "total": "total",
+    "rate": "Taux"
+  },
+  "export": {
+    "title": "Exporter",
+    "json": "JSON",
+    "xml": "XML",
+    "success": "Export téléchargé",
+    "error": "Erreur lors de l'export"
+  },
+  "import": {
+    "title": "Importer des tâches",
+    "selectFile": "Sélectionner un fichier",
+    "selectFileDescription": "Formats acceptés : JSON, XML",
+    "dropzone": "Glissez un fichier ici ou cliquez pour sélectionner",
+    "analyzing": "Analyse du fichier...",
+    "preview": "Aperçu de l'import",
+    "taskCount": "{{count}} tâche(s) trouvée(s)",
+    "duplicates": "{{count}} doublon(s) détecté(s)",
+    "duplicateHandling": "Gestion des doublons",
+    "skip": "Ignorer",
+    "overwrite": "Écraser",
+    "importButton": "Importer",
+    "importing": "Import en cours...",
+    "success": "Import terminé avec succès",
+    "successFor": "Import terminé pour {{username}}",
+    "error": "Erreur lors de l'import",
+    "fileError": "Erreur lors de la lecture du fichier",
+    "invalidFormat": "Format de fichier invalide",
+    "noTasks": "Aucune tâche à importer"
+  },
+  "messages": {
+    "created": "Tâche créée avec succès",
+    "updated": "Tâche modifiée avec succès",
+    "deleted": "Tâche supprimée",
+    "completed": "Tâche terminée",
+    "reopened": "Tâche réouverte",
+    "createError": "Erreur lors de la création",
+    "updateError": "Erreur lors de la modification",
+    "deleteError": "Erreur lors de la suppression",
+    "loadError": "Erreur lors du chargement des tâches"
+  },
+  "confirm": {
+    "delete": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
+    "deleteTitle": "Supprimer la tâche"
+  },
+  "permissions": {
+    "canCreate": "Créer",
+    "canEdit": "Modifier",
+    "canDelete": "Supprimer",
+    "canCreateCategories": "Catégories",
+    "noCreate": "Vous n'avez pas la permission de créer des tâches",
+    "noEdit": "Vous n'avez pas la permission de modifier des tâches",
+    "noDelete": "Vous n'avez pas la permission de supprimer des tâches"
+  },
+  "dueDate": {
+    "overdue": "En retard",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "noDueDate": "Sans échéance"
+  }
+}

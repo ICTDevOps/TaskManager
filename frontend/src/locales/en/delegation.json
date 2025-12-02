@@ -1,0 +1,100 @@
+{
+  "title": "Sharing",
+  "tabs": {
+    "given": "Shares given",
+    "received": "Shares received"
+  },
+  "given": {
+    "title": "Shares given",
+    "description": "Users you have given access to your tasks",
+    "noShares": "No shares given",
+    "noSharesDescription": "Invite someone to give them access to your tasks",
+    "invite": "Invite",
+    "searchUser": "Search user...",
+    "searchPlaceholder": "Email or username",
+    "permissions": "Permissions",
+    "hiddenCategories": "Hidden categories",
+    "hiddenCategoriesHint": "These categories will not be visible to the delegate",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "revoke": "Revoke access",
+    "update": "Update"
+  },
+  "received": {
+    "title": "Shares received",
+    "description": "Users who have given you access to their tasks",
+    "noShares": "No shares received",
+    "noSharesDescription": "You haven't received any sharing invitations",
+    "pending": "Pending invitations",
+    "active": "Active shares",
+    "accept": "Accept",
+    "reject": "Reject",
+    "leave": "Leave"
+  },
+  "permissions": {
+    "label": "Rights",
+    "canCreate": "Create tasks",
+    "canEdit": "Edit tasks",
+    "canDelete": "Delete tasks",
+    "canCreateCategories": "Create categories"
+  },
+  "context": {
+    "title": "Context",
+    "self": "My tasks",
+    "myTasks": "My tasks",
+    "myTasksDescription": "Your personal tasks",
+    "tasksOf": "Tasks of {{name}}",
+    "owner": "Managing tasks of <1>{{name}}</1>",
+    "switch": "Switch context",
+    "permissions": "Your permissions",
+    "setDefault": "Set as default",
+    "setAsDefault": "Set as default",
+    "isDefault": "Default context",
+    "delegatedTasks": "Delegated tasks",
+    "noDelegatedTasks": "No delegated tasks"
+  },
+  "messages": {
+    "inviteSent": "Invitation sent successfully",
+    "inviteAccepted": "Invitation accepted",
+    "inviteRejected": "Invitation rejected",
+    "accessRevoked": "Access revoked",
+    "leftShare": "You have left this share",
+    "permissionsUpdated": "Permissions updated",
+    "defaultContextUpdated": "Default context updated",
+    "error": "An error occurred",
+    "userNotFound": "User not found",
+    "alreadyShared": "You already share your tasks with this user",
+    "cannotShareSelf": "You cannot share with yourself"
+  },
+  "confirm": {
+    "revoke": "Are you sure you want to revoke {{name}}'s access to your tasks?",
+    "leave": "Are you sure you want to leave this share? You will no longer have access to {{name}}'s tasks.",
+    "reject": "Reject invitation from {{name}}?",
+    "leaveGeneric": "Are you sure you want to leave this share?",
+    "deleteShare": "Are you sure you want to revoke this access?"
+  },
+  "sendInvite": "Send invitation",
+  "edit": {
+    "canCreateTasks": "Can create tasks",
+    "canEditTasks": "Can edit tasks",
+    "canDeleteTasks": "Can delete tasks",
+    "canCreateCategories": "Can create categories",
+    "hiddenCategories": "Categories to hide:",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "display": {
+    "permissions": "Permissions:",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "categories": "Categories",
+    "hiddenCategories": "{{count}} hidden category(ies)",
+    "active": "Active"
+  },
+  "actions": {
+    "accept": "Accept",
+    "reject": "Reject",
+    "leave": "Leave"
+  }
+}

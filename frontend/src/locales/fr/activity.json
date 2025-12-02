@@ -1,0 +1,45 @@
+{
+  "title": "Journal d'activité",
+  "noActivity": "Aucune activité",
+  "noActivityDescription": "Les actions sur vos tâches apparaîtront ici",
+  "loadMore": "Charger plus",
+  "loading": "Chargement...",
+  "actions": {
+    "created_task": "a créé la tâche",
+    "updated_task": "a modifié la tâche",
+    "deleted_task": "a supprimé la tâche",
+    "completed_task": "a terminé la tâche",
+    "reopened_task": "a réouvert la tâche",
+    "created_category": "a créé la catégorie",
+    "updated_category": "a modifié la catégorie",
+    "deleted_category": "a supprimé la catégorie"
+  },
+  "actors": {
+    "you": "Vous",
+    "forYou": "pour vous",
+    "forOwner": "pour {{name}}"
+  },
+  "filters": {
+    "all": "Tout",
+    "tasks": "Tâches",
+    "categories": "Catégories"
+  },
+  "filter": {
+    "all": "Toutes les actions",
+    "tasks": "Tâches uniquement",
+    "categories": "Catégories uniquement"
+  },
+  "dates": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} min",
+    "hoursAgo": "Il y a {{count}}h",
+    "daysAgo": "Il y a {{count}}j"
+  },
+  "pagination": {
+    "page": "Page {{current}} sur {{total}}"
+  },
+  "refresh": "Actualiser",
+  "error": "Erreur lors du chargement de l'activité"
+}

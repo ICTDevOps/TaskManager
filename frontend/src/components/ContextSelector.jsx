@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, User, Users, Star } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ChevronDown, User, Users, Star } from 'lucide-react'
 
 export default function ContextSelector({
   currentContext,
@@ -9,8 +10,9 @@ export default function ContextSelector({
   defaultContext = 'self',
   onSetDefaultContext
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const { t } = useTranslation(['delegation'])
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,14 +37,14 @@ export default function ContextSelector({
 
   const getCurrentLabel = () => {
     if (!currentContext || currentContext === 'self') {
-      return 'Mes tâches';
+      return t('context.myTasks')
     }
-    const delegation = acceptedDelegations.find(d => d.owner.id === currentContext);
+    const delegation = acceptedDelegations.find(d => d.owner.id === currentContext)
     if (delegation) {
-      return `Tâches de ${getDisplayName(delegation.owner)}`;
+      return t('context.tasksOf', { name: getDisplayName(delegation.owner) })
     }
-    return 'Mes tâches';
-  };
+    return t('context.myTasks')
+  }
 
   const handleSelect = (context) => {
     onContextChange(context);
@@ -101,8 +103,8 @@ export default function ContextSelector({
                 <User className="h-4 w-4 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">Mes tâches</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Vos tâches personnelles</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{t('context.myTasks')}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('context.myTasksDescription')}</p>
               </div>
             </button>
             <button
@@ -112,7 +114,7 @@ export default function ContextSelector({
                   ? 'text-yellow-500'
                   : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400'
               }`}
-              title={isDefault('self') ? 'Contexte par défaut' : 'Définir comme défaut'}
+              title={isDefault('self') ? t('context.isDefault') : t('context.setAsDefault')}
             >
               <Star className={`h-4 w-4 ${isDefault('self') ? 'fill-yellow-500' : ''}`} />
             </button>
@@ -125,7 +127,7 @@ export default function ContextSelector({
           {acceptedDelegations.length > 0 && (
             <div className="border-t border-gray-200 dark:border-gray-700">
               <p className="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50">
-                Tâches déléguées
+                {t('context.delegatedTasks')}
               </p>
             </div>
           )}
@@ -163,7 +165,7 @@ export default function ContextSelector({
                     ? 'text-yellow-500'
                     : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400'
                 }`}
-                title={isDefault(delegation.owner.id) ? 'Contexte par défaut' : 'Définir comme défaut'}
+                title={isDefault(delegation.owner.id) ? t('context.isDefault') : t('context.setAsDefault')}
               >
                 <Star className={`h-4 w-4 ${isDefault(delegation.owner.id) ? 'fill-yellow-500' : ''}`} />
               </button>
@@ -177,7 +179,7 @@ export default function ContextSelector({
           {acceptedDelegations.length === 0 && (
             <div className="px-4 py-3 text-center">
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Aucune tâche déléguée
+                {t('context.noDelegatedTasks')}
               </p>
             </div>
           )}

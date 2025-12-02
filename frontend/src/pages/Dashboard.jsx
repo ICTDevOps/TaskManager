@@ -1,25 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Plus, RefreshCw } from 'lucide-react';
-import Header from '../components/Header';
-import FilterBar from '../components/FilterBar';
-import TaskCard from '../components/TaskCard';
-import TaskModal from '../components/TaskModal';
-import CategoryManager from '../components/CategoryManager';
-import SettingsPanel from '../components/SettingsPanel';
-import SharingPanel from '../components/SharingPanel';
-import ContextSelector from '../components/ContextSelector';
-import ActivityLogPanel from '../components/ActivityLogPanel';
-import EmptyState from '../components/EmptyState';
-import { ToastContainer } from '../components/Toast';
-import { useAuth } from '../hooks/useAuth';
-import { useTasks } from '../hooks/useTasks';
-import { useCategories } from '../hooks/useCategories';
-import { delegationService } from '../services/delegations';
-import { authService } from '../services/auth';
+import { useState, useEffect, useCallback } from 'react'
+import { Plus, RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import Header from '../components/Header'
+import FilterBar from '../components/FilterBar'
+import TaskCard from '../components/TaskCard'
+import TaskModal from '../components/TaskModal'
+import CategoryManager from '../components/CategoryManager'
+import SettingsPanel from '../components/SettingsPanel'
+import SharingPanel from '../components/SharingPanel'
+import ContextSelector from '../components/ContextSelector'
+import ActivityLogPanel from '../components/ActivityLogPanel'
+import EmptyState from '../components/EmptyState'
+import { ToastContainer } from '../components/Toast'
+import { useAuth } from '../hooks/useAuth'
+import { useTasks } from '../hooks/useTasks'
+import { useCategories } from '../hooks/useCategories'
+import { delegationService } from '../services/delegations'
+import { authService } from '../services/auth'
 
 export default function Dashboard() {
-  const { user, updateUser } = useAuth();
-  const [defaultContext, setDefaultContext] = useState(user?.defaultContext || 'self');
+  const { t } = useTranslation(['tasks', 'categories', 'delegation', 'common'])
+  const { user, updateUser } = useAuth()
+  const [defaultContext, setDefaultContext] = useState(user?.defaultContext || 'self')
 
   const {
     tasks,
@@ -99,11 +101,11 @@ export default function Dashboard() {
         params.ownerId = currentContext;
       }
 
-      await fetchTasks(params);
+      await fetchTasks(params)
     } catch {
-      addToast('Erreur lors du chargement des tâches', 'error');
+      addToast(t('messages.loadError'), 'error')
     }
-  }, [fetchTasks, status, sortBy, sortOrder, search, categoryId, currentContext, addToast]);
+  }, [fetchTasks, status, sortBy, sortOrder, search, categoryId, currentContext, addToast, t])
 
   // Load categories based on context
   const loadCategories = useCallback(async () => {
@@ -184,16 +186,16 @@ export default function Dashboard() {
   // Mettre à jour le contexte par défaut
   const handleSetDefaultContext = async (context) => {
     try {
-      const data = await authService.updateDefaultContext(context);
-      setDefaultContext(context);
+      const data = await authService.updateDefaultContext(context)
+      setDefaultContext(context)
       if (updateUser && data.user) {
-        updateUser(data.user);
+        updateUser(data.user)
       }
-      addToast('Contexte par défaut mis à jour', 'success');
+      addToast(t('delegation:messages.defaultContextUpdated'), 'success')
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la mise à jour', 'error');
+      addToast(err.response?.data?.error || t('common:errors.generic'), 'error')
     }
-  };
+  }
 
   // Check if can perform action
   const canCreate = currentContext === 'self' || currentPermissions?.canCreateTasks;
@@ -205,93 +207,93 @@ export default function Dashboard() {
   const handleCreateTask = async (data) => {
     try {
       if (currentContext !== 'self') {
-        data.ownerId = currentContext;
+        data.ownerId = currentContext
       }
-      await createTask(data);
-      addToast('Tâche créée avec succès', 'success');
-      if (currentContext === 'self') fetchStats();
+      await createTask(data)
+      addToast(t('messages.created'), 'success')
+      if (currentContext === 'self') fetchStats()
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la création', 'error');
+      addToast(err.response?.data?.error || t('messages.createError'), 'error')
     }
-  };
+  }
 
   const handleUpdateTask = async (data) => {
     try {
-      await updateTask(editingTask.id, data);
-      addToast('Tâche modifiée avec succès', 'success');
-      setEditingTask(null);
+      await updateTask(editingTask.id, data)
+      addToast(t('messages.updated'), 'success')
+      setEditingTask(null)
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la modification', 'error');
+      addToast(err.response?.data?.error || t('messages.updateError'), 'error')
     }
-  };
+  }
 
   const handleDeleteTask = async (id) => {
     try {
-      await deleteTask(id);
-      addToast('Tâche supprimée', 'success');
-      if (currentContext === 'self') fetchStats();
+      await deleteTask(id)
+      addToast(t('messages.deleted'), 'success')
+      if (currentContext === 'self') fetchStats()
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la suppression', 'error');
+      addToast(err.response?.data?.error || t('messages.deleteError'), 'error')
     }
-  };
+  }
 
   const handleCompleteTask = async (id) => {
     try {
       // Remove from list if filtering by 'active' status
-      await completeTask(id, status === 'active');
-      addToast('Tâche terminée', 'success');
-      if (currentContext === 'self') fetchStats();
+      await completeTask(id, status === 'active')
+      addToast(t('messages.completed'), 'success')
+      if (currentContext === 'self') fetchStats()
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur', 'error');
+      addToast(err.response?.data?.error || t('common:errors.generic'), 'error')
     }
-  };
+  }
 
   const handleReopenTask = async (id) => {
     try {
       // Remove from list if filtering by 'completed' status
-      await reopenTask(id, status === 'completed');
-      addToast('Tâche réouverte', 'success');
-      if (currentContext === 'self') fetchStats();
+      await reopenTask(id, status === 'completed')
+      addToast(t('messages.reopened'), 'success')
+      if (currentContext === 'self') fetchStats()
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur', 'error');
+      addToast(err.response?.data?.error || t('common:errors.generic'), 'error')
     }
-  };
+  }
 
   // Category handlers
   const handleCreateCategory = async (data) => {
     try {
       if (currentContext !== 'self') {
-        data.ownerId = currentContext;
+        data.ownerId = currentContext
       }
-      await createCategory(data);
-      addToast('Catégorie créée', 'success');
+      await createCategory(data)
+      addToast(t('categories:messages.created'), 'success')
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la création', 'error');
+      addToast(err.response?.data?.error || t('categories:messages.createError'), 'error')
     }
-  };
+  }
 
   const handleUpdateCategory = async (id, data) => {
     try {
-      await updateCategory(id, data);
-      addToast('Catégorie modifiée', 'success');
-      loadTasks();
+      await updateCategory(id, data)
+      addToast(t('categories:messages.updated'), 'success')
+      loadTasks()
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la modification', 'error');
+      addToast(err.response?.data?.error || t('categories:messages.updateError'), 'error')
     }
-  };
+  }
 
   const handleDeleteCategory = async (id) => {
     try {
-      await deleteCategory(id);
-      addToast('Catégorie supprimée', 'success');
+      await deleteCategory(id)
+      addToast(t('categories:messages.deleted'), 'success')
       if (categoryId === id) {
-        setCategoryId('');
+        setCategoryId('')
       }
-      loadTasks();
+      loadTasks()
     } catch (err) {
-      addToast(err.response?.data?.error || 'Erreur lors de la suppression', 'error');
+      addToast(err.response?.data?.error || t('categories:messages.deleteError'), 'error')
     }
-  };
+  }
 
   const handleContextChange = (context) => {
     setCurrentContext(context);
@@ -301,21 +303,21 @@ export default function Dashboard() {
 
   const openCreateModal = () => {
     if (!canCreate) {
-      addToast('Vous n\'avez pas la permission de créer des tâches', 'error');
-      return;
+      addToast(t('permissions.noCreate'), 'error')
+      return
     }
-    setEditingTask(null);
-    setModalOpen(true);
-  };
+    setEditingTask(null)
+    setModalOpen(true)
+  }
 
   const openEditModal = (task) => {
     if (!canEdit) {
-      addToast('Vous n\'avez pas la permission de modifier des tâches', 'error');
-      return;
+      addToast(t('permissions.noEdit'), 'error')
+      return
     }
-    setEditingTask(task);
-    setModalOpen(true);
-  };
+    setEditingTask(task)
+    setModalOpen(true)
+  }
 
   const closeModal = () => {
     setModalOpen(false);
@@ -357,11 +359,11 @@ export default function Dashboard() {
           {/* Permissions indicator for delegated context */}
           {currentContext !== 'self' && currentPermissions && (
             <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-              <span>Droits:</span>
-              {canCreate && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">Créer</span>}
-              {canEdit && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">Modifier</span>}
-              {canDelete && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">Supprimer</span>}
-              {canCreateCat && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">Catégories</span>}
+              <span>{t('delegation:permissions.label')}:</span>
+              {canCreate && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">{t('permissions.canCreate')}</span>}
+              {canEdit && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">{t('permissions.canEdit')}</span>}
+              {canDelete && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">{t('permissions.canDelete')}</span>}
+              {canCreateCat && <span className="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">{t('permissions.canCreateCategories')}</span>}
             </div>
           )}
         </div>
@@ -389,7 +391,7 @@ export default function Dashboard() {
             className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-primary transition disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Actualiser
+            {t('common:refresh')}
           </button>
         </div>
 
@@ -430,7 +432,7 @@ export default function Dashboard() {
         <button
           onClick={openCreateModal}
           className="fixed bottom-6 right-6 w-14 h-14 bg-primary hover:bg-primary-dark text-white rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-105"
-          title="Nouvelle tâche"
+          title={t('create')}
         >
           <Plus className="h-6 w-6" />
         </button>

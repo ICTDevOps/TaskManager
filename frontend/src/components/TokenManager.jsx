@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Key,
   Plus,
@@ -16,6 +17,7 @@ import {
 import { getTokens, createToken, deleteToken, revokeToken } from '../services/tokens'
 
 export default function TokenManager({ onClose }) {
+  const { t, i18n } = useTranslation(['tokens'])
   const [tokens, setTokens] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -49,7 +51,7 @@ export default function TokenManager({ onClose }) {
       const data = await getTokens()
       setTokens(data.tokens || [])
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors du chargement des tokens.')
+      setError(err.response?.data?.error || t('messages.loadError'))
     } finally {
       setLoading(false)
     }
@@ -61,7 +63,7 @@ export default function TokenManager({ onClose }) {
     setSuccess('')
 
     if (!newTokenName.trim()) {
-      setError('Le nom du token est requis.')
+      setError(t('form.nameRequired'))
       return
     }
 
@@ -89,7 +91,7 @@ export default function TokenManager({ onClose }) {
         canCreateCategories: false
       })
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la création du token.')
+      setError(err.response?.data?.error || t('messages.createError'))
     } finally {
       setCreating(false)
     }
@@ -104,34 +106,35 @@ export default function TokenManager({ onClose }) {
   }
 
   const handleDeleteToken = async (id, name) => {
-    if (!confirm(`Supprimer définitivement le token "${name}" ?`)) return
+    if (!confirm(t('confirm.delete', { name }))) return
 
     try {
       await deleteToken(id)
       setTokens(prev => prev.filter(t => t.id !== id))
-      setSuccess('Token supprimé.')
+      setSuccess(t('messages.deleted'))
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la suppression.')
+      setError(err.response?.data?.error || t('messages.deleteError'))
     }
   }
 
   const handleRevokeToken = async (id, name) => {
-    if (!confirm(`Révoquer le token "${name}" ? Il ne pourra plus être utilisé.`)) return
+    if (!confirm(t('confirm.revoke', { name }))) return
 
     try {
       await revokeToken(id)
       setTokens(prev => prev.map(t => t.id === id ? { ...t, isActive: false } : t))
-      setSuccess('Token révoqué.')
+      setSuccess(t('messages.revoked'))
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la révocation.')
+      setError(err.response?.data?.error || t('messages.revokeError'))
     }
   }
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Jamais'
-    return new Date(dateString).toLocaleDateString('fr-FR', {
+    if (!dateString) return t('dates.never')
+    const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US'
+    return new Date(dateString).toLocaleDateString(locale, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -142,11 +145,11 @@ export default function TokenManager({ onClose }) {
 
   const getPermissionsList = (token) => {
     const perms = []
-    if (token.canReadTasks) perms.push('Lire')
-    if (token.canCreateTasks) perms.push('Créer')
-    if (token.canUpdateTasks) perms.push('Modifier')
-    if (token.canDeleteTasks) perms.push('Supprimer')
-    return perms.join(', ') || 'Aucune'
+    if (token.canReadTasks) perms.push(t('permissions.read'))
+    if (token.canCreateTasks) perms.push(t('permissions.create'))
+    if (token.canUpdateTasks) perms.push(t('permissions.update'))
+    if (token.canDeleteTasks) perms.push(t('permissions.delete'))
+    return perms.join(', ') || t('permissions.none')
   }
 
   return (
@@ -160,11 +163,11 @@ export default function TokenManager({ onClose }) {
             <div className="flex items-center gap-3">
               <Key className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Tokens API
+                {t('title')}
               </h2>
             </div>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
-              <span className="sr-only">Fermer</span>
+              <span className="sr-only">{t('close')}</span>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -194,7 +197,7 @@ export default function TokenManager({ onClose }) {
                   <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                      Token créé ! Copiez-le maintenant, il ne sera plus jamais affiché.
+                      {t('created.title')}
                     </p>
                     <div className="mt-2 flex items-center gap-2">
                       <code className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 rounded border border-yellow-300 dark:border-yellow-700 text-sm font-mono text-gray-900 dark:text-gray-100 break-all">
@@ -211,7 +214,7 @@ export default function TokenManager({ onClose }) {
                       onClick={() => setNewlyCreatedToken(null)}
                       className="mt-2 text-sm text-yellow-600 dark:text-yellow-400 hover:underline"
                     >
-                      J'ai copié mon token, fermer ce message
+                      {t('created.copied')}
                     </button>
                   </div>
                 </div>
@@ -225,51 +228,51 @@ export default function TokenManager({ onClose }) {
                 className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition"
               >
                 <Plus className="h-4 w-4" />
-                Créer un nouveau token
+                {t('createButton')}
               </button>
             )}
 
             {/* Formulaire de création */}
             {showCreateForm && (
               <form onSubmit={handleCreateToken} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg space-y-4">
-                <h3 className="font-medium text-gray-900 dark:text-white">Nouveau token</h3>
+                <h3 className="font-medium text-gray-900 dark:text-white">{t('newToken')}</h3>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Nom du token *
+                    {t('form.name')}
                   </label>
                   <input
                     type="text"
                     value={newTokenName}
                     onChange={(e) => setNewTokenName(e.target.value)}
-                    placeholder="Ex: Mon agent N8N"
+                    placeholder={t('form.namePlaceholder')}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Expiration
+                    {t('form.expiration')}
                   </label>
                   <select
                     value={newTokenExpiry}
                     onChange={(e) => setNewTokenExpiry(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   >
-                    <option value="never">Jamais</option>
-                    <option value="7">7 jours</option>
-                    <option value="30">30 jours</option>
-                    <option value="90">90 jours</option>
-                    <option value="365">1 an</option>
+                    <option value="never">{t('expiry.never')}</option>
+                    <option value="7">{t('expiry.7days')}</option>
+                    <option value="30">{t('expiry.30days')}</option>
+                    <option value="90">{t('expiry.90days')}</option>
+                    <option value="365">{t('expiry.1year')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Permissions
+                    {t('form.permissions')}
                   </label>
                   <div className="space-y-2">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Tâches :</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{t('form.tasks')}</p>
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -277,7 +280,7 @@ export default function TokenManager({ onClose }) {
                         onChange={(e) => setNewTokenPermissions(p => ({ ...p, canReadTasks: e.target.checked }))}
                         className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Lire les tâches</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('permissions.readTasks')}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -286,7 +289,7 @@ export default function TokenManager({ onClose }) {
                         onChange={(e) => setNewTokenPermissions(p => ({ ...p, canCreateTasks: e.target.checked }))}
                         className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Créer des tâches</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('permissions.createTasks')}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -295,7 +298,7 @@ export default function TokenManager({ onClose }) {
                         onChange={(e) => setNewTokenPermissions(p => ({ ...p, canUpdateTasks: e.target.checked }))}
                         className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Modifier des tâches</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('permissions.updateTasks')}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -304,10 +307,10 @@ export default function TokenManager({ onClose }) {
                         onChange={(e) => setNewTokenPermissions(p => ({ ...p, canDeleteTasks: e.target.checked }))}
                         className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Supprimer des tâches</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('permissions.deleteTasks')}</span>
                     </label>
 
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 mb-2">Catégories :</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 mb-2">{t('form.categories')}</p>
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -315,7 +318,7 @@ export default function TokenManager({ onClose }) {
                         onChange={(e) => setNewTokenPermissions(p => ({ ...p, canReadCategories: e.target.checked }))}
                         className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Lire les catégories</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('permissions.readCategories')}</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -324,7 +327,7 @@ export default function TokenManager({ onClose }) {
                         onChange={(e) => setNewTokenPermissions(p => ({ ...p, canCreateCategories: e.target.checked }))}
                         className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Créer des catégories</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('permissions.createCategories')}</span>
                     </label>
                   </div>
                 </div>
@@ -335,14 +338,14 @@ export default function TokenManager({ onClose }) {
                     disabled={creating}
                     className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition disabled:opacity-50"
                   >
-                    {creating ? 'Création...' : 'Créer le token'}
+                    {creating ? t('form.creating') : t('form.create')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
                     className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
                   >
-                    Annuler
+                    {t('form.cancel')}
                   </button>
                 </div>
               </form>
@@ -351,7 +354,7 @@ export default function TokenManager({ onClose }) {
             {/* Liste des tokens */}
             <div className="space-y-3">
               <h3 className="font-medium text-gray-900 dark:text-white">
-                Mes tokens ({tokens.length}/10)
+                {t('myTokens', { count: tokens.length, max: 10 })}
               </h3>
 
               {loading ? (
@@ -360,7 +363,7 @@ export default function TokenManager({ onClose }) {
                 </div>
               ) : tokens.length === 0 ? (
                 <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                  Aucun token créé. Créez-en un pour permettre à vos agents IA d'accéder à vos tâches.
+                  {t('noTokens')}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -381,7 +384,7 @@ export default function TokenManager({ onClose }) {
                             </span>
                             {!token.isActive && (
                               <span className="px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 rounded">
-                                Révoqué
+                                {t('status.revoked')}
                               </span>
                             )}
                           </div>
@@ -396,18 +399,18 @@ export default function TokenManager({ onClose }) {
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              Créé le {formatDate(token.createdAt)}
+                              {t('dates.createdAt', { date: formatDate(token.createdAt) })}
                             </span>
                             {token.lastUsedAt && (
                               <span className="flex items-center gap-1">
                                 <Activity className="h-3 w-3" />
-                                Utilisé le {formatDate(token.lastUsedAt)}
+                                {t('dates.lastUsedAt', { date: formatDate(token.lastUsedAt) })}
                               </span>
                             )}
                             {token.expiresAt && (
                               <span className="flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
-                                Expire le {formatDate(token.expiresAt)}
+                                {t('dates.expiresAt', { date: formatDate(token.expiresAt) })}
                               </span>
                             )}
                           </div>
@@ -418,7 +421,7 @@ export default function TokenManager({ onClose }) {
                             <button
                               onClick={() => handleRevokeToken(token.id, token.name)}
                               className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded"
-                              title="Révoquer"
+                              title={t('actions.revoke')}
                             >
                               <Ban className="h-4 w-4" />
                             </button>
@@ -426,7 +429,7 @@ export default function TokenManager({ onClose }) {
                           <button
                             onClick={() => handleDeleteToken(token.id, token.name)}
                             className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-                            title="Supprimer"
+                            title={t('actions.delete')}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -441,14 +444,14 @@ export default function TokenManager({ onClose }) {
             {/* Info MCP */}
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
               <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
-                Utilisation avec des agents IA
+                {t('info.title')}
               </h4>
               <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">
-                Utilisez vos tokens pour connecter N8N, Make, ou d'autres outils à vos tâches.
+                {t('info.description')}
               </p>
               <div className="text-xs text-blue-600 dark:text-blue-400 font-mono space-y-1">
-                <p><strong>API REST :</strong> Authorization: Bearer pat_xxxx</p>
-                <p><strong>MCP SSE :</strong> /mcp/sse avec header Authorization</p>
+                <p><strong>{t('info.apiRest')}</strong> Authorization: Bearer pat_xxxx</p>
+                <p><strong>{t('info.mcpSse')}</strong> /mcp/sse avec header Authorization</p>
               </div>
             </div>
           </div>

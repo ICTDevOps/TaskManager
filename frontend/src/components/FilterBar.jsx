@@ -1,17 +1,5 @@
-import { Search, SortAsc, SortDesc, X, Tag } from 'lucide-react';
-
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'Toutes' },
-  { value: 'active', label: 'Actives' },
-  { value: 'completed', label: 'Complétées' }
-];
-
-const SORT_OPTIONS = [
-  { value: 'created_at', label: 'Date de création' },
-  { value: 'due_date', label: 'Date d\'échéance' },
-  { value: 'importance', label: 'Importance' },
-  { value: 'title', label: 'Titre' }
-];
+import { useTranslation } from 'react-i18next'
+import { Search, SortAsc, SortDesc, X, Tag } from 'lucide-react'
 
 export default function FilterBar({
   status,
@@ -26,6 +14,20 @@ export default function FilterBar({
   categoryId,
   setCategoryId
 }) {
+  const { t } = useTranslation(['tasks'])
+
+  const STATUS_OPTIONS = [
+    { value: 'all', label: t('status.all') },
+    { value: 'active', label: t('status.active') },
+    { value: 'completed', label: t('status.completed') }
+  ]
+
+  const SORT_OPTIONS = [
+    { value: 'created_at', label: t('sort.createdAt') },
+    { value: 'due_date', label: t('sort.dueDate') },
+    { value: 'importance', label: t('sort.importance') },
+    { value: 'title', label: t('sort.title') }
+  ]
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 space-y-4">
       {/* Search */}
@@ -35,7 +37,7 @@ export default function FilterBar({
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une tâche..."
+          placeholder={t('filter.search')}
           className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
         />
         {search && (
@@ -84,7 +86,7 @@ export default function FilterBar({
           <button
             onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
             className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
-            title={sortOrder === 'asc' ? 'Tri croissant' : 'Tri décroissant'}
+            title={sortOrder === 'asc' ? t('sort.asc') : t('sort.desc')}
           >
             {sortOrder === 'asc' ? (
               <SortAsc className="h-5 w-5 text-gray-600 dark:text-gray-400" />
@@ -107,7 +109,7 @@ export default function FilterBar({
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
-            Toutes
+            {t('filter.allCategories')}
           </button>
           {categories.map(cat => (
             <button

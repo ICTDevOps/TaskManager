@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, History, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { activityService } from '../services/activity';
 
 export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = null }) {
+  const { t, i18n } = useTranslation(['activity']);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
@@ -48,17 +50,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
   };
 
   const getActionLabel = (action) => {
-    const labels = {
-      created_task: 'a créé la tâche',
-      updated_task: 'a modifié la tâche',
-      deleted_task: 'a supprimé la tâche',
-      completed_task: 'a complété la tâche',
-      reopened_task: 'a réouvert la tâche',
-      created_category: 'a créé la catégorie',
-      updated_category: 'a modifié la catégorie',
-      deleted_category: 'a supprimé la catégorie'
-    };
-    return labels[action] || action;
+    return t(`actions.${action}`, { defaultValue: action });
   };
 
   const getActionIcon = (action) => {
@@ -77,13 +69,14 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
     const diffMinutes = Math.floor(diff / 60000);
     const diffHours = Math.floor(diff / 3600000);
     const diffDays = Math.floor(diff / 86400000);
+    const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
-    if (diffMinutes < 1) return 'À l\'instant';
-    if (diffMinutes < 60) return `Il y a ${diffMinutes} min`;
-    if (diffHours < 24) return `Il y a ${diffHours}h`;
-    if (diffDays < 7) return `Il y a ${diffDays}j`;
+    if (diffMinutes < 1) return t('dates.justNow');
+    if (diffMinutes < 60) return t('dates.minutesAgo', { count: diffMinutes });
+    if (diffHours < 24) return t('dates.hoursAgo', { count: diffHours });
+    if (diffDays < 7) return t('dates.daysAgo', { count: diffDays });
 
-    return date.toLocaleDateString('fr-FR', {
+    return date.toLocaleDateString(locale, {
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
@@ -92,7 +85,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
   };
 
   const getActorName = (log) => {
-    if (log.isOwnAction) return 'Vous';
+    if (log.isOwnAction) return t('actors.you');
     const actor = log.actor;
     if (actor.firstName || actor.lastName) {
       return `${actor.firstName || ''} ${actor.lastName || ''}`.trim();
@@ -113,17 +106,18 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
     const groups = {};
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
     logs.forEach(log => {
       const logDate = new Date(log.createdAt).toDateString();
       let groupKey;
 
       if (logDate === today) {
-        groupKey = 'Aujourd\'hui';
+        groupKey = t('dates.today');
       } else if (logDate === yesterday) {
-        groupKey = 'Hier';
+        groupKey = t('dates.yesterday');
       } else {
-        groupKey = new Date(log.createdAt).toLocaleDateString('fr-FR', {
+        groupKey = new Date(log.createdAt).toLocaleDateString(locale, {
           weekday: 'long',
           day: 'numeric',
           month: 'long'
@@ -150,7 +144,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <History className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Journal d'activité</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('title')}</h2>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
             <X className="h-5 w-5 text-gray-500" />
@@ -167,7 +161,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
-            Tout
+            {t('filters.all')}
           </button>
           <button
             onClick={() => { setFilter('tasks'); setPagination(p => ({ ...p, page: 1 })); }}
@@ -177,7 +171,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
-            Tâches
+            {t('filters.tasks')}
           </button>
           <button
             onClick={() => { setFilter('categories'); setPagination(p => ({ ...p, page: 1 })); }}
@@ -187,7 +181,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
-            Catégories
+            {t('filters.categories')}
           </button>
         </div>
 
@@ -200,7 +194,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
           ) : logs.length === 0 ? (
             <div className="text-center py-8">
               <History className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-500 dark:text-gray-400">Aucune activité enregistrée</p>
+              <p className="text-gray-500 dark:text-gray-400">{t('noActivity')}</p>
             </div>
           ) : (
             <div className="p-4">
@@ -225,7 +219,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
                             <span className="font-medium">"{log.entityTitle}"</span>
                             {log.targetOwner && (
                               <span className="text-gray-500 dark:text-gray-400">
-                                {' '}pour <span className="font-medium text-blue-600 dark:text-blue-400">{getTargetOwnerName(log)}</span>
+                                {' '}{t('actors.forOwner', { name: '' })}<span className="font-medium text-blue-600 dark:text-blue-400">{getTargetOwnerName(log)}</span>
                               </span>
                             )}
                           </p>
@@ -255,7 +249,7 @@ export default function ActivityLogPanel({ isOpen, onClose, currentOwnerId = nul
         {pagination.totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Page {pagination.page} sur {pagination.totalPages}
+              {t('pagination.page', { current: pagination.page, total: pagination.totalPages })}
             </p>
             <div className="flex gap-2">
               <button

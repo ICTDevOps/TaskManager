@@ -6,6 +6,13 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 
 **Intègre un serveur MCP (Model Context Protocol)** permettant aux agents IA (Claude Desktop, N8N, etc.) de gérer vos tâches de manière autonome.
 
+<p align="center">
+  <img src="docs/images/img1.png" width="24%" />
+  <img src="docs/images/img2.png" width="24%" />
+  <img src="docs/images/img3.png" width="24%" />
+  <img src="docs/images/img4.png" width="24%" />
+</p>
+
 ## Fonctionnalités
 
 ### Pour les utilisateurs
@@ -18,6 +25,7 @@ Application de gestion de tâches multi-utilisateurs avec interface moderne, sys
 - **Import** : Importer des tâches depuis un fichier JSON ou XML avec gestion des doublons (Nouveau v0.7)
 - **Paramètres** : Modifier son profil, email et mot de passe
 - **Thème** : Mode clair / Mode sombre
+- **Multilingue** : Interface en français et anglais (Nouveau v0.8)
 
 ### Délégation de tâches (Nouveau v2.0)
 - **Partage** : Inviter d'autres utilisateurs à gérer ses tâches
@@ -103,7 +111,7 @@ docker-compose up --build -d
 ### Option 2 : Déploiement Synology/Portainer
 
 Utiliser le fichier `docker-compose.synology.yml` qui contient :
-- Images Docker pré-construites depuis Docker Hub (`lordbadack/taskmanager-*:0.7`)
+- Images Docker pré-construites depuis Docker Hub (`lordbadack/taskmanager-*:0.8`)
 - Mots de passe et secrets générés
 - Migrations automatiques au démarrage
 - Seed automatique de l'admin
@@ -113,8 +121,8 @@ Utiliser le fichier `docker-compose.synology.yml` qui contient :
 
 | Image | Tags |
 |-------|------|
-| `lordbadack/taskmanager-backend` | `0.7`, `0.6`, `0.5` |
-| `lordbadack/taskmanager-frontend` | `0.7`, `0.6`, `0.5` |
+| `lordbadack/taskmanager-backend` | `0.8`, `0.7`, `0.6` |
+| `lordbadack/taskmanager-frontend` | `0.8`, `0.7`, `0.6` |
 
 ## Compte administrateur par défaut
 

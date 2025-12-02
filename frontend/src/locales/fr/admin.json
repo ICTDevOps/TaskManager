@@ -1,0 +1,124 @@
+{
+  "title": "Administration",
+  "backToApp": "Retour à l'application",
+  "logout": "Déconnexion",
+  "tabs": {
+    "dashboard": "Dashboard",
+    "users": "Utilisateurs"
+  },
+  "filters": {
+    "allRoles": "Tous les rôles",
+    "users": "Utilisateurs",
+    "admins": "Administrateurs",
+    "allStatuses": "Tous les statuts",
+    "active": "Actifs",
+    "inactive": "Inactifs"
+  },
+  "stats": {
+    "title": "Statistiques",
+    "totalUsers": "Utilisateurs",
+    "activeUsers": "Actifs",
+    "totalTasks": "Tâches totales",
+    "completedTasks": "Complétées",
+    "completionRate": "Taux de complétion",
+    "categories": "Catégories",
+    "activeInactive": "{{active}} actifs, {{inactive}} inactifs",
+    "activeCompleted": "{{active}} actives, {{completed}} complétées"
+  },
+  "topUsers": {
+    "title": "Top utilisateurs par nombre de tâches",
+    "taskCount": "{{count}} tâches"
+  },
+  "users": {
+    "title": "Gestion des utilisateurs",
+    "search": "Rechercher un utilisateur...",
+    "table": {
+      "user": "Utilisateur",
+      "email": "Email",
+      "role": "Rôle",
+      "status": "Statut",
+      "tasks": "Tâches",
+      "apiAccess": "API",
+      "created": "Inscrit le",
+      "lastLogin": "Dernière connexion",
+      "actions": "Actions"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "User"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "apiAccess": {
+      "enabled": "Actif",
+      "disabled": "Inactif",
+      "enable": "Activer accès API",
+      "disable": "Désactiver accès API"
+    },
+    "actions": {
+      "view": "Voir les détails",
+      "edit": "Modifier",
+      "changePassword": "Changer le mot de passe",
+      "exportTasks": "Exporter les tâches",
+      "importTasks": "Importer des tâches",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "promoteAdmin": "Promouvoir admin",
+      "demoteAdmin": "Rétrograder en user",
+      "delete": "Supprimer"
+    },
+    "noUsers": "Aucun utilisateur trouvé",
+    "protected": "Protégé"
+  },
+  "modals": {
+    "changePassword": {
+      "title": "Changer le mot de passe",
+      "subtitle": "Définir un nouveau mot de passe pour",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Minimum 6 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "forceChange": "Forcer le changement à la prochaine connexion",
+      "submit": "Modifier",
+      "submitting": "Modification...",
+      "cancel": "Annuler",
+      "success": "Mot de passe modifié",
+      "error": "Erreur lors du changement de mot de passe",
+      "minLength": "Le mot de passe doit faire au moins 6 caractères"
+    },
+    "deleteUser": {
+      "title": "Supprimer l'utilisateur",
+      "message": "Êtes-vous sûr de vouloir supprimer l'utilisateur",
+      "warning": "Cette action est irréversible et supprimera toutes ses tâches et catégories.",
+      "exportFirst": "Exporter les tâches avant suppression",
+      "submit": "Supprimer",
+      "submitting": "Suppression...",
+      "cancel": "Annuler",
+      "success": "Utilisateur supprimé",
+      "error": "Erreur lors de la suppression"
+    },
+    "userDetails": {
+      "title": "Détails de l'utilisateur",
+      "info": "Informations",
+      "stats": "Statistiques",
+      "tasksActive": "Tâches actives",
+      "tasksCompleted": "Tâches complétées",
+      "categories": "Catégories"
+    }
+  },
+  "messages": {
+    "roleUpdated": "Rôle mis à jour",
+    "userActivated": "Utilisateur activé",
+    "userDeactivated": "Utilisateur désactivé",
+    "apiAccessEnabled": "Accès API activé",
+    "apiAccessDisabled": "Accès API désactivé",
+    "exportSuccess": "Export téléchargé",
+    "exportError": "Erreur lors de l'export",
+    "importSuccess": "Import terminé pour {{username}}",
+    "cannotModifySelf": "Vous ne pouvez pas modifier votre propre compte",
+    "cannotDeleteAdmin": "Impossible de supprimer le compte admin principal",
+    "loadError": "Erreur lors du chargement des données",
+    "error": "Erreur"
+  }
+}

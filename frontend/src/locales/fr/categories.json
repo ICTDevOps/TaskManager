@@ -1,0 +1,46 @@
+{
+  "title": "Catégories",
+  "manage": "Gérer les catégories",
+  "create": "Nouvelle catégorie",
+  "edit": "Modifier la catégorie",
+  "delete": "Supprimer la catégorie",
+  "noCategories": "Aucune catégorie",
+  "noCategoriesDescription": "Créez des catégories pour organiser vos tâches",
+  "noCategoriesHint": "Créez votre première catégorie ci-dessus",
+  "add": "Ajouter",
+  "update": "Modifier",
+  "cancel": "Annuler",
+  "form": {
+    "name": "Nom de la catégorie",
+    "namePlaceholder": "Ex: Travail, Personnel...",
+    "nameRequired": "Le nom est requis",
+    "color": "Couleur",
+    "createButton": "Créer la catégorie",
+    "updateButton": "Modifier la catégorie"
+  },
+  "colors": {
+    "blue": "Bleu",
+    "green": "Vert",
+    "red": "Rouge",
+    "yellow": "Jaune",
+    "purple": "Violet",
+    "pink": "Rose",
+    "orange": "Orange",
+    "gray": "Gris"
+  },
+  "messages": {
+    "created": "Catégorie créée",
+    "updated": "Catégorie modifiée",
+    "deleted": "Catégorie supprimée",
+    "createError": "Erreur lors de la création",
+    "updateError": "Erreur lors de la modification",
+    "deleteError": "Erreur lors de la suppression",
+    "loadError": "Erreur lors du chargement des catégories"
+  },
+  "confirm": {
+    "delete": "Supprimer la catégorie \"{{name}}\" ? Les tâches associées ne seront pas supprimées.",
+    "deleteTitle": "Supprimer la catégorie"
+  },
+  "taskCount": "{{count}} tâche(s)",
+  "default": "Par défaut"
+}

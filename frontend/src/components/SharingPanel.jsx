@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
-import { X, UserPlus, Users, Check, X as XIcon, Edit2, Trash2, Shield, Eye, Plus, Pencil, ChevronDown, ChevronUp } from 'lucide-react';
-import { delegationService } from '../services/delegations';
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { X, UserPlus, Users, Check, X as XIcon, Edit2, Trash2, Shield, Eye, Plus, Pencil, ChevronDown, ChevronUp } from 'lucide-react'
+import { delegationService } from '../services/delegations'
 
 export default function SharingPanel({ isOpen, onClose, categories = [] }) {
+  const { t } = useTranslation(['delegation', 'common'])
   const [delegations, setDelegations] = useState({ given: [], received: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,7 +41,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
       const data = await delegationService.getDelegations();
       setDelegations(data);
     } catch (err) {
-      setError('Erreur lors du chargement des partages.');
+      setError(t('messages.error'))
     } finally {
       setLoading(false);
     }
@@ -52,9 +54,9 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
     setInviteLoading(true);
 
     try {
-      await delegationService.createDelegation(inviteData);
-      setSuccess('Invitation envoyée avec succès.');
-      setShowInviteForm(false);
+      await delegationService.createDelegation(inviteData)
+      setSuccess(t('messages.inviteSent'))
+      setShowInviteForm(false)
       setInviteData({
         identifier: '',
         canCreateTasks: false,
@@ -62,10 +64,10 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
         canDeleteTasks: false,
         canCreateCategories: false,
         hiddenCategoryIds: []
-      });
-      loadDelegations();
+      })
+      loadDelegations()
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de l\'envoi de l\'invitation.');
+      setError(err.response?.data?.error || t('messages.error'))
     } finally {
       setInviteLoading(false);
     }
@@ -73,45 +75,45 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
 
   const handleAccept = async (id) => {
     try {
-      await delegationService.acceptDelegation(id);
-      setSuccess('Invitation acceptée.');
-      loadDelegations();
+      await delegationService.acceptDelegation(id)
+      setSuccess(t('messages.inviteAccepted'))
+      loadDelegations()
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de l\'acceptation.');
+      setError(err.response?.data?.error || t('messages.error'))
     }
-  };
+  }
 
   const handleReject = async (id) => {
     try {
-      await delegationService.rejectDelegation(id);
-      setSuccess('Invitation refusée.');
-      loadDelegations();
+      await delegationService.rejectDelegation(id)
+      setSuccess(t('messages.inviteRejected'))
+      loadDelegations()
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors du refus.');
+      setError(err.response?.data?.error || t('messages.error'))
     }
-  };
+  }
 
   const handleLeave = async (id) => {
-    if (!confirm('Êtes-vous sûr de vouloir quitter ce partage ?')) return;
+    if (!confirm(t('confirm.leaveGeneric'))) return
     try {
-      await delegationService.leaveDelegation(id);
-      setSuccess('Vous avez quitté ce partage.');
-      loadDelegations();
+      await delegationService.leaveDelegation(id)
+      setSuccess(t('messages.leftShare'))
+      loadDelegations()
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur.');
+      setError(err.response?.data?.error || t('messages.error'))
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce partage ?')) return;
+    if (!confirm(t('confirm.deleteShare'))) return
     try {
-      await delegationService.deleteDelegation(id);
-      setSuccess('Partage supprimé.');
-      loadDelegations();
+      await delegationService.deleteDelegation(id)
+      setSuccess(t('messages.accessRevoked'))
+      loadDelegations()
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la suppression.');
+      setError(err.response?.data?.error || t('messages.error'))
     }
-  };
+  }
 
   const handleStartEdit = (delegation) => {
     setEditingId(delegation.id);
@@ -126,15 +128,15 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
 
   const handleSaveEdit = async () => {
     try {
-      await delegationService.updateDelegation(editingId, editData);
-      setSuccess('Permissions mises à jour.');
-      setEditingId(null);
-      setEditData(null);
-      loadDelegations();
+      await delegationService.updateDelegation(editingId, editData)
+      setSuccess(t('messages.permissionsUpdated'))
+      setEditingId(null)
+      setEditData(null)
+      loadDelegations()
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la mise à jour.');
+      setError(err.response?.data?.error || t('messages.error'))
     }
-  };
+  }
 
   const toggleHiddenCategory = (categoryId, isInvite = false) => {
     if (isInvite) {
@@ -170,7 +172,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Partages</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('title')}</h2>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
             <X className="h-5 w-5 text-gray-500" />
@@ -201,14 +203,14 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Personnes qui gèrent mes tâches
+                    {t('given.description')}
                   </h3>
                   <button
                     onClick={() => setShowInviteForm(!showInviteForm)}
                     className="flex items-center gap-1 text-sm text-primary hover:text-primary-dark"
                   >
                     <UserPlus className="h-4 w-4" />
-                    Inviter
+                    {t('given.invite')}
                   </button>
                 </div>
 
@@ -217,21 +219,21 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                   <form onSubmit={handleInvite} className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <div className="mb-3">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Email ou nom d'utilisateur
+                        {t('given.searchPlaceholder')}
                       </label>
                       <input
                         type="text"
                         value={inviteData.identifier}
                         onChange={(e) => setInviteData({ ...inviteData, identifier: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
-                        placeholder="utilisateur@email.com"
+                        placeholder="user@email.com"
                         required
                       />
                     </div>
 
                     <div className="mb-3">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Permissions
+                        {t('given.permissions')}
                       </label>
                       <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -241,7 +243,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                             onChange={(e) => setInviteData({ ...inviteData, canCreateTasks: e.target.checked })}
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
-                          Peut créer des tâches
+                          {t('permissions.canCreate')}
                         </label>
                         <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                           <input
@@ -250,7 +252,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                             onChange={(e) => setInviteData({ ...inviteData, canEditTasks: e.target.checked })}
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
-                          Peut modifier des tâches
+                          {t('permissions.canEdit')}
                         </label>
                         <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                           <input
@@ -259,7 +261,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                             onChange={(e) => setInviteData({ ...inviteData, canDeleteTasks: e.target.checked })}
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
-                          Peut supprimer des tâches
+                          {t('permissions.canDelete')}
                         </label>
                         <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                           <input
@@ -268,7 +270,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                             onChange={(e) => setInviteData({ ...inviteData, canCreateCategories: e.target.checked })}
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
-                          Peut créer des catégories
+                          {t('permissions.canCreateCategories')}
                         </label>
                       </div>
                     </div>
@@ -276,7 +278,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                     {categories.length > 0 && (
                       <div className="mb-3">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Catégories à masquer
+                          {t('given.hiddenCategories')}
                         </label>
                         <div className="flex flex-wrap gap-2">
                           {categories.map(cat => (
@@ -303,14 +305,14 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                         disabled={inviteLoading}
                         className="px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary-dark disabled:opacity-50"
                       >
-                        {inviteLoading ? 'Envoi...' : 'Envoyer l\'invitation'}
+                        {inviteLoading ? t('common:loading') : t('sendInvite')}
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowInviteForm(false)}
                         className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
-                        Annuler
+                        {t('common:cancel')}
                       </button>
                     </div>
                   </form>
@@ -319,7 +321,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                 {/* Liste des délégations données */}
                 {delegations.given.length === 0 ? (
                   <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                    Personne ne gère vos tâches pour le moment.
+                    {t('given.noShares')}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -340,7 +342,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                 @{delegation.delegate.username}
                                 {delegation.status === 'pending' && (
                                   <span className="ml-2 px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded">
-                                    En attente
+                                    {t('given.pending')}
                                   </span>
                                 )}
                               </p>
@@ -386,7 +388,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                       onChange={(e) => setEditData({ ...editData, canCreateTasks: e.target.checked })}
                                       className="rounded border-gray-300 text-primary focus:ring-primary"
                                     />
-                                    Peut créer des tâches
+                                    {t('edit.canCreateTasks')}
                                   </label>
                                   <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                     <input
@@ -395,7 +397,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                       onChange={(e) => setEditData({ ...editData, canEditTasks: e.target.checked })}
                                       className="rounded border-gray-300 text-primary focus:ring-primary"
                                     />
-                                    Peut modifier des tâches
+                                    {t('edit.canEditTasks')}
                                   </label>
                                   <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                     <input
@@ -404,7 +406,7 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                       onChange={(e) => setEditData({ ...editData, canDeleteTasks: e.target.checked })}
                                       className="rounded border-gray-300 text-primary focus:ring-primary"
                                     />
-                                    Peut supprimer des tâches
+                                    {t('edit.canDeleteTasks')}
                                   </label>
                                   <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                     <input
@@ -413,14 +415,14 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                       onChange={(e) => setEditData({ ...editData, canCreateCategories: e.target.checked })}
                                       className="rounded border-gray-300 text-primary focus:ring-primary"
                                     />
-                                    Peut créer des catégories
+                                    {t('edit.canCreateCategories')}
                                   </label>
                                 </div>
 
                                 {categories.length > 0 && (
                                   <div>
                                     <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
-                                      Catégories à masquer :
+                                      {t('edit.hiddenCategories')}
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                       {categories.map(cat => (
@@ -446,37 +448,37 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                     onClick={handleSaveEdit}
                                     className="px-3 py-1.5 bg-primary text-white text-xs rounded hover:bg-primary-dark"
                                   >
-                                    Enregistrer
+                                    {t('edit.save')}
                                   </button>
                                   <button
                                     onClick={() => { setEditingId(null); setEditData(null); }}
                                     className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs rounded hover:bg-gray-50 dark:hover:bg-gray-700"
                                   >
-                                    Annuler
+                                    {t('edit.cancel')}
                                   </button>
                                 </div>
                               </div>
                             ) : (
                               // Mode affichage
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                <p className="mb-1">Permissions :</p>
+                                <p className="mb-1">{t('display.permissions')}</p>
                                 <div className="flex flex-wrap gap-2">
                                   <span className={`px-2 py-0.5 rounded ${delegation.canCreateTasks ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                    {delegation.canCreateTasks ? '✓' : '✗'} Créer
+                                    {delegation.canCreateTasks ? '✓' : '✗'} {t('display.create')}
                                   </span>
                                   <span className={`px-2 py-0.5 rounded ${delegation.canEditTasks ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                    {delegation.canEditTasks ? '✓' : '✗'} Modifier
+                                    {delegation.canEditTasks ? '✓' : '✗'} {t('display.edit')}
                                   </span>
                                   <span className={`px-2 py-0.5 rounded ${delegation.canDeleteTasks ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                    {delegation.canDeleteTasks ? '✓' : '✗'} Supprimer
+                                    {delegation.canDeleteTasks ? '✓' : '✗'} {t('display.delete')}
                                   </span>
                                   <span className={`px-2 py-0.5 rounded ${delegation.canCreateCategories ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                    {delegation.canCreateCategories ? '✓' : '✗'} Catégories
+                                    {delegation.canCreateCategories ? '✓' : '✗'} {t('display.categories')}
                                   </span>
                                 </div>
                                 {delegation.hiddenCategoryIds?.length > 0 && (
                                   <p className="mt-2 text-gray-500">
-                                    {delegation.hiddenCategoryIds.length} catégorie(s) masquée(s)
+                                    {t('display.hiddenCategories', { count: delegation.hiddenCategoryIds.length })}
                                   </p>
                                 )}
                               </div>
@@ -492,12 +494,12 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
               {/* Section: Invitations reçues */}
               <div>
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  Invitations reçues
+                  {t('received.title')}
                 </h3>
 
                 {delegations.received.length === 0 ? (
                   <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                    Aucune invitation reçue.
+                    {t('received.noSharesDescription')}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -527,24 +529,24 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                                 className="px-3 py-1.5 bg-green-500 text-white text-xs rounded hover:bg-green-600 flex items-center gap-1"
                               >
                                 <Check className="h-3 w-3" />
-                                Accepter
+                                {t('actions.accept')}
                               </button>
                               <button
                                 onClick={() => handleReject(delegation.id)}
                                 className="px-3 py-1.5 bg-red-500 text-white text-xs rounded hover:bg-red-600 flex items-center gap-1"
                               >
                                 <XIcon className="h-3 w-3" />
-                                Refuser
+                                {t('actions.reject')}
                               </button>
                             </div>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-green-600 dark:text-green-400">Actif</span>
+                              <span className="text-xs text-green-600 dark:text-green-400">{t('display.active')}</span>
                               <button
                                 onClick={() => handleLeave(delegation.id)}
                                 className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs rounded hover:bg-gray-100 dark:hover:bg-gray-600"
                               >
-                                Quitter
+                                {t('actions.leave')}
                               </button>
                             </div>
                           )}
@@ -554,16 +556,16 @@ export default function SharingPanel({ isOpen, onClose, categories = [] }) {
                           <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
                             <div className="text-xs text-gray-600 dark:text-gray-400 flex flex-wrap gap-2">
                               <span className={`px-2 py-0.5 rounded ${delegation.canCreateTasks ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                {delegation.canCreateTasks ? '✓' : '✗'} Créer
+                                {delegation.canCreateTasks ? '✓' : '✗'} {t('display.create')}
                               </span>
                               <span className={`px-2 py-0.5 rounded ${delegation.canEditTasks ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                {delegation.canEditTasks ? '✓' : '✗'} Modifier
+                                {delegation.canEditTasks ? '✓' : '✗'} {t('display.edit')}
                               </span>
                               <span className={`px-2 py-0.5 rounded ${delegation.canDeleteTasks ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                {delegation.canDeleteTasks ? '✓' : '✗'} Supprimer
+                                {delegation.canDeleteTasks ? '✓' : '✗'} {t('display.delete')}
                               </span>
                               <span className={`px-2 py-0.5 rounded ${delegation.canCreateCategories ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                {delegation.canCreateCategories ? '✓' : '✗'} Catégories
+                                {delegation.canCreateCategories ? '✓' : '✗'} {t('display.categories')}
                               </span>
                             </div>
                           </div>

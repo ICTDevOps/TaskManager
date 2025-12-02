@@ -1,0 +1,46 @@
+{
+  "title": "Categories",
+  "manage": "Manage categories",
+  "create": "New category",
+  "edit": "Edit category",
+  "delete": "Delete category",
+  "noCategories": "No categories",
+  "noCategoriesDescription": "Create categories to organize your tasks",
+  "noCategoriesHint": "Create your first category above",
+  "add": "Add",
+  "update": "Edit",
+  "cancel": "Cancel",
+  "form": {
+    "name": "Category name",
+    "namePlaceholder": "E.g.: Work, Personal...",
+    "nameRequired": "Name is required",
+    "color": "Color",
+    "createButton": "Create category",
+    "updateButton": "Update category"
+  },
+  "colors": {
+    "blue": "Blue",
+    "green": "Green",
+    "red": "Red",
+    "yellow": "Yellow",
+    "purple": "Purple",
+    "pink": "Pink",
+    "orange": "Orange",
+    "gray": "Gray"
+  },
+  "messages": {
+    "created": "Category created",
+    "updated": "Category updated",
+    "deleted": "Category deleted",
+    "createError": "Error creating category",
+    "updateError": "Error updating category",
+    "deleteError": "Error deleting category",
+    "loadError": "Error loading categories"
+  },
+  "confirm": {
+    "delete": "Delete category \"{{name}}\"? Associated tasks will not be deleted.",
+    "deleteTitle": "Delete category"
+  },
+  "taskCount": "{{count}} task(s)",
+  "default": "Default"
+}
