@@ -5,6 +5,71 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [0.8] - 2025-12-02
+
+### Ajouté
+- **Support multilingue** : Interface disponible en Français et Anglais
+- **Sélecteur de langue** : Composant LanguageSelector disponible sur toutes les pages d'authentification et dans les paramètres
+- **Système i18n complet** : Utilisation de i18next et react-i18next
+- **Détection automatique** : La langue du navigateur est détectée automatiquement
+- **Persistance** : Le choix de langue est sauvegardé dans localStorage
+
+### Modifié
+- **Tous les composants** : Traduction de tous les textes statiques via le système i18n
+- **Profil utilisateur** : Ajout de la sélection de langue dans les paramètres
+- **README** : Documentation disponible en Français (README.fr.md) et Anglais (README.md)
+
+### Structure i18n
+```
+frontend/src/locales/
+├── index.js          # Configuration i18next
+├── fr/               # Traductions françaises
+│   ├── common.json
+│   ├── auth.json
+│   ├── tasks.json
+│   ├── categories.json
+│   ├── settings.json
+│   ├── admin.json
+│   ├── activity.json
+│   ├── delegation.json
+│   └── tokens.json
+└── en/               # Traductions anglaises (même structure)
+```
+
+## [0.7] - 2025-12-01
+
+### Ajouté
+- **Import de tâches** : Possibilité d'importer des tâches depuis un fichier JSON ou XML
+- **Validation import** : Vérification de la structure et des données lors de l'import
+- **Bouton import** : Nouveau bouton dans le panneau des paramètres
+
+### Modifié
+- **Filtre par défaut** : Le filtre "Actives" est maintenant sélectionné par défaut au lieu de "Toutes"
+- **UX améliorée** : Diverses améliorations de l'expérience utilisateur
+
+## [0.6] - 2025-11-30
+
+### Ajouté
+- **Personal Access Tokens (PAT)** : Système de tokens d'accès API pour les utilisateurs
+  - Création de tokens avec permissions granulaires (lecture, écriture, suppression)
+  - Gestion des tokens (liste, révocation)
+  - Date d'expiration configurable
+- **MCP Server** : Serveur Model Context Protocol pour intégration avec Claude Desktop
+  - Bridge MCP dans `mcp-bridge/`
+  - Endpoints MCP pour la gestion des tâches
+  - Configuration via variables d'environnement
+- **Interface TokenManager** : Composant de gestion des tokens API dans les paramètres
+- **Permission API** : Nouveau champ `canUseApi` dans le modèle User (activable par admin)
+
+### Modifié
+- **Panneau admin** : Ajout de la possibilité d'activer/désactiver l'accès API par utilisateur
+- **Structure projet** : Ajout du dossier `mcp-bridge/` pour le serveur MCP
+
+### Sécurité
+- Tokens avec préfixe `pat_` pour identification claire
+- Hashage sécurisé des tokens en base de données
+- Permissions granulaires sur chaque token
+
 ## [0.4] - 2025-11-29
 
 ### Corrigé

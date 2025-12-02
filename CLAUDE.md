@@ -4,10 +4,11 @@
 
 Application de gestion de taches multi-utilisateurs avec systeme de delegation et panneau d'administration.
 
-- **Version actuelle** : 0.4
+- **Version actuelle** : 0.8
 - **Stack** : React 18 + Express.js + PostgreSQL 15 + Prisma ORM
 - **Conteneurisation** : Docker + Docker Compose
 - **Deploiement** : Synology NAS via Portainer
+- **Langues** : Francais et Anglais (i18next)
 
 ## Commandes Essentielles
 
@@ -57,15 +58,15 @@ docker-compose exec backend npx prisma generate         # Regenerer le client
 docker-compose build --no-cache
 
 # Tag des images
-docker tag taskmanager-backend lordbadack/taskmanager-backend:0.4
+docker tag taskmanager-backend lordbadack/taskmanager-backend:0.8
 docker tag taskmanager-backend lordbadack/taskmanager-backend:latest
-docker tag taskmanager-frontend lordbadack/taskmanager-frontend:0.4
+docker tag taskmanager-frontend lordbadack/taskmanager-frontend:0.8
 docker tag taskmanager-frontend lordbadack/taskmanager-frontend:latest
 
 # Push sur Docker Hub
-docker push lordbadack/taskmanager-backend:0.4
+docker push lordbadack/taskmanager-backend:0.8
 docker push lordbadack/taskmanager-backend:latest
-docker push lordbadack/taskmanager-frontend:0.4
+docker push lordbadack/taskmanager-frontend:0.8
 docker push lordbadack/taskmanager-frontend:latest
 ```
 
@@ -96,7 +97,8 @@ TaskManager/
 │   │   ├── components/            # Composants reutilisables
 │   │   ├── pages/                 # Pages principales
 │   │   ├── services/              # Appels API (api.js)
-│   │   └── hooks/                 # Hooks React (useAuth)
+│   │   ├── hooks/                 # Hooks React (useAuth)
+│   │   └── locales/               # Traductions i18n (fr/, en/)
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
@@ -112,8 +114,8 @@ TaskManager/
 
 ### Langage et Messages
 
-- **Interface utilisateur** : Francais
-- **Messages d'erreur API** : Francais
+- **Interface utilisateur** : Multilingue (Francais par defaut, Anglais)
+- **Messages d'erreur API** : Francais (backend)
 - **Code et commentaires** : Anglais accepte
 - **Commits** : Francais ou Anglais
 
@@ -184,7 +186,7 @@ TaskManager/
 
 ### Composants Cles
 
-- `Header.jsx` : Navigation, theme, deconnexion
+- `Header.jsx` : Navigation, theme, langue, deconnexion
 - `TaskCard.jsx` : Affichage d'une tache
 - `TaskModal.jsx` : Creation/edition de tache
 - `CategoryManager.jsx` : Gestion des categories
@@ -192,6 +194,8 @@ TaskManager/
 - `SharingPanel.jsx` : Gestion des delegations
 - `ContextSelector.jsx` : Selection du contexte (ses taches ou delegue)
 - `ActivityLogPanel.jsx` : Journal d'activite
+- `LanguageSelector.jsx` : Selecteur de langue (drapeaux FR/EN)
+- `TokenManager.jsx` : Gestion des tokens API (PAT)
 
 ### Gestion de l'Authentification
 
@@ -380,9 +384,57 @@ curl "http://localhost:3000/api/v1/tasks/export?format=json" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+## Internationalisation (i18n)
+
+### Configuration
+
+- **Librairie** : i18next + react-i18next
+- **Langues** : Francais (fr) - defaut, Anglais (en)
+- **Detection** : localStorage > navigateur
+- **Stockage** : localStorage (cle: `language`)
+
+### Structure des traductions
+
+```
+frontend/src/locales/
+├── index.js              # Configuration i18next
+├── fr/                   # Traductions francaises
+│   ├── common.json       # Termes communs
+│   ├── auth.json         # Authentification
+│   ├── tasks.json        # Taches
+│   ├── categories.json   # Categories
+│   ├── settings.json     # Parametres
+│   ├── admin.json        # Administration
+│   ├── activity.json     # Journal d'activite
+│   ├── delegation.json   # Delegations
+│   └── tokens.json       # Tokens API
+└── en/                   # Traductions anglaises
+    └── (meme structure)
+```
+
+### Utilisation dans les composants
+
+```jsx
+import { useTranslation } from 'react-i18next'
+
+function MyComponent() {
+  const { t } = useTranslation(['namespace'])
+  return <p>{t('key.subkey')}</p>
+}
+```
+
+### Ajout d'une nouvelle langue
+
+1. Creer le dossier `frontend/src/locales/[code]/`
+2. Copier tous les fichiers JSON de `fr/` ou `en/`
+3. Traduire les valeurs
+4. Ajouter les imports dans `locales/index.js`
+5. Ajouter la langue dans `LanguageSelector.jsx`
+
 ## Documentation Additionnelle
 
-- `README.md` : Documentation complete du projet
+- `README.md` : Documentation complete du projet (EN)
+- `README.fr.md` : Documentation complete du projet (FR)
 - `CHANGELOG.md` : Historique des versions
 - `docs/QUICK-START.md` : Guide de demarrage rapide
 - `docs/RECAP-FINAL.md` : Resume de l'etat du projet
