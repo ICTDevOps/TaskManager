@@ -1,30 +1,33 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { CheckSquare, User, Lock, AlertCircle } from 'lucide-react';
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '../hooks/useAuth'
+import { CheckSquare, User, Lock, AlertCircle } from 'lucide-react'
+import LanguageSelector from '../components/LanguageSelector'
 
 export default function Login() {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const { t } = useTranslation(['auth', 'common'])
+  const [identifier, setIdentifier] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     try {
-      await login(identifier, password);
-      navigate('/dashboard');
+      await login(identifier, password)
+      navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur de connexion');
+      setError(err.response?.data?.error || t('errors.invalidCredentials'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -35,10 +38,10 @@ export default function Login() {
             <CheckSquare className="h-12 w-12 text-primary" />
           </div>
           <h2 className="mt-4 text-3xl font-bold text-gray-900 dark:text-white">
-            Task Manager
+            {t('common:appName')}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Connectez-vous pour accéder à vos tâches
+            {t('login.subtitle')}
           </p>
         </div>
 
@@ -53,7 +56,7 @@ export default function Login() {
           <div className="space-y-4">
             <div>
               <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email ou nom d'utilisateur
+                {t('login.identifier')}
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -64,14 +67,14 @@ export default function Login() {
                   onChange={(e) => setIdentifier(e.target.value)}
                   required
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="votre@email.com ou username"
+                  placeholder={t('login.identifierPlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Mot de passe
+                {t('login.password')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -82,7 +85,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="••••••••"
+                  placeholder={t('login.passwordPlaceholder')}
                 />
               </div>
             </div>
@@ -96,21 +99,26 @@ export default function Login() {
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             ) : (
-              'Se connecter'
+              t('login.submit')
             )}
           </button>
 
+          {/* Language Selector */}
+          <div className="flex justify-center">
+            <LanguageSelector />
+          </div>
+
           <p className="text-center text-gray-600 dark:text-gray-400">
-            Pas encore de compte ?{' '}
+            {t('login.noAccount')}{' '}
             <Link to="/register" className="text-primary hover:text-primary-dark font-medium">
-              S'inscrire
+              {t('login.createAccount')}
             </Link>
           </p>
 
           <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-center text-sm text-gray-500 dark:text-gray-500">
               <Link to="/admin/login" className="hover:text-gray-700 dark:hover:text-gray-400">
-                Accès administration
+                {t('login.adminAccess')}
               </Link>
             </p>
           </div>
@@ -120,8 +128,8 @@ export default function Login() {
 
       {/* Footer */}
       <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>VnetConsult SRL &copy; 2025 - Version 0.7</p>
+        <p>{t('common:footer.copyright')} &copy; 2025</p>
       </footer>
     </div>
-  );
+  )
 }

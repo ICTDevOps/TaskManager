@@ -1,0 +1,67 @@
+{
+  "appName": "Task Manager",
+  "loading": "Chargement...",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "edit": "Modifier",
+  "create": "Créer",
+  "close": "Fermer",
+  "confirm": "Confirmer",
+  "yes": "Oui",
+  "no": "Non",
+  "search": "Rechercher",
+  "refresh": "Actualiser",
+  "back": "Retour",
+  "next": "Suivant",
+  "previous": "Précédent",
+  "all": "Tous",
+  "none": "Aucun",
+  "or": "ou",
+  "and": "et",
+  "optional": "optionnel",
+  "required": "requis",
+  "actions": "Actions",
+  "details": "Détails",
+  "status": "Statut",
+  "date": "Date",
+  "name": "Nom",
+  "description": "Description",
+  "error": "Erreur",
+  "success": "Succès",
+  "warning": "Attention",
+  "info": "Information",
+  "language": "Langue",
+  "languages": {
+    "fr": "Français",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Mode clair",
+    "dark": "Mode sombre",
+    "toggle": "Changer le thème"
+  },
+  "footer": {
+    "copyright": "VnetConsult SRL"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue",
+    "network": "Erreur de connexion au serveur",
+    "notFound": "Ressource non trouvée",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Accès refusé"
+  },
+  "confirm": {
+    "title": "Confirmation",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer cet élément ?"
+  },
+  "time": {
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} min",
+    "hoursAgo": "Il y a {{count}}h",
+    "daysAgo": "Il y a {{count}}j",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "tomorrow": "Demain"
+  }
+}

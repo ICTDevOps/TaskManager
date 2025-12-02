@@ -1,43 +1,46 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { Shield, User, Lock, AlertCircle } from 'lucide-react';
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '../hooks/useAuth'
+import { Shield, User, Lock, AlertCircle } from 'lucide-react'
+import LanguageSelector from '../components/LanguageSelector'
 
 export default function AdminLogin() {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const { t } = useTranslation(['auth', 'common'])
+  const [identifier, setIdentifier] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     try {
-      const result = await login(identifier, password);
+      const result = await login(identifier, password)
 
       // Check if user is admin
       if (result.user.role !== 'admin') {
-        setError('Accès réservé aux administrateurs.');
-        setLoading(false);
-        return;
+        setError(t('errors.adminOnly'))
+        setLoading(false)
+        return
       }
 
       // Check if must change password
       if (result.user.mustChangePassword) {
-        navigate('/admin/change-password');
+        navigate('/admin/change-password')
       } else {
-        navigate('/admin');
+        navigate('/admin')
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur de connexion');
+      setError(err.response?.data?.error || t('errors.invalidCredentials'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
@@ -47,10 +50,10 @@ export default function AdminLogin() {
             <Shield className="h-12 w-12 text-primary" />
           </div>
           <h2 className="mt-4 text-3xl font-bold text-gray-900 dark:text-white">
-            Administration
+            {t('adminLogin.title')}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Connectez-vous pour accéder au panneau d'administration
+            {t('adminLogin.subtitle')}
           </p>
         </div>
 
@@ -65,7 +68,7 @@ export default function AdminLogin() {
           <div className="space-y-4">
             <div>
               <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Identifiant
+                {t('login.identifier')}
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -83,7 +86,7 @@ export default function AdminLogin() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Mot de passe
+                {t('login.password')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -94,7 +97,7 @@ export default function AdminLogin() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="••••••••"
+                  placeholder={t('login.passwordPlaceholder')}
                 />
               </div>
             </div>
@@ -108,17 +111,22 @@ export default function AdminLogin() {
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             ) : (
-              'Se connecter'
+              t('login.submit')
             )}
           </button>
 
+          {/* Language Selector */}
+          <div className="flex justify-center">
+            <LanguageSelector />
+          </div>
+
           <p className="text-center text-gray-600 dark:text-gray-400">
             <Link to="/login" className="text-primary hover:text-primary-dark font-medium">
-              Retour à l'application
+              {t('adminLogin.backToApp')}
             </Link>
           </p>
         </form>
       </div>
     </div>
-  );
+  )
 }

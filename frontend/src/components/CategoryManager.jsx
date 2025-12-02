@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Plus, Pencil, Trash2, Tag, Check } from 'lucide-react';
 
 const PRESET_COLORS = [
@@ -24,6 +25,7 @@ export default function CategoryManager({
   onUpdateCategory,
   onDeleteCategory
 }) {
+  const { t } = useTranslation(['categories', 'common']);
   const [editingCategory, setEditingCategory] = useState(null);
   const [formData, setFormData] = useState({ name: '', color: '#6366f1' });
   const [error, setError] = useState('');
@@ -56,7 +58,7 @@ export default function CategoryManager({
     setError('');
 
     if (!formData.name.trim()) {
-      setError('Le nom est requis');
+      setError(t('form.nameRequired'));
       return;
     }
 
@@ -70,7 +72,7 @@ export default function CategoryManager({
       setFormData({ name: '', color: '#6366f1' });
       setEditingCategory(null);
     } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue');
+      setError(err.response?.data?.error || t('common:error'));
     } finally {
       setLoading(false);
     }
@@ -89,13 +91,13 @@ export default function CategoryManager({
   };
 
   const handleDelete = async (category) => {
-    if (!window.confirm(`Supprimer la catégorie "${category.name}" ? Les tâches associées ne seront pas supprimées.`)) {
+    if (!window.confirm(t('confirm.delete', { name: category.name }))) {
       return;
     }
     try {
       await onDeleteCategory(category.id);
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la suppression');
+      setError(err.response?.data?.error || t('messages.deleteError'));
     }
   };
 
@@ -109,7 +111,7 @@ export default function CategoryManager({
           <div className="flex items-center gap-2">
             <Tag className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Gérer les catégories
+              {t('manage')}
             </h2>
           </div>
           <button
@@ -134,7 +136,7 @@ export default function CategoryManager({
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Nom de la catégorie"
+                placeholder={t('form.name')}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
               />
             </div>
@@ -171,7 +173,7 @@ export default function CategoryManager({
               className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition disabled:opacity-50 flex items-center gap-2"
             >
               {editingCategory ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-              {editingCategory ? 'Modifier' : 'Ajouter'}
+              {editingCategory ? t('update') : t('add')}
             </button>
 
             {editingCategory && (
@@ -180,7 +182,7 @@ export default function CategoryManager({
                 onClick={handleCancelEdit}
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
-                Annuler
+                {t('cancel')}
               </button>
             )}
           </div>
@@ -191,8 +193,8 @@ export default function CategoryManager({
           {categories.length === 0 ? (
             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <Tag className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>Aucune catégorie</p>
-              <p className="text-sm">Créez votre première catégorie ci-dessus</p>
+              <p>{t('noCategories')}</p>
+              <p className="text-sm">{t('noCategoriesHint')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -211,7 +213,7 @@ export default function CategoryManager({
                     </span>
                     {category._count?.tasks > 0 && (
                       <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-600 px-2 py-0.5 rounded-full">
-                        {category._count.tasks} tâche{category._count.tasks > 1 ? 's' : ''}
+                        {t('taskCount', { count: category._count.tasks })}
                       </span>
                     )}
                   </div>
@@ -220,14 +222,14 @@ export default function CategoryManager({
                     <button
                       onClick={() => handleEdit(category)}
                       className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition text-gray-500 dark:text-gray-400"
-                      title="Modifier"
+                      title={t('edit')}
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(category)}
                       className="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 transition text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                      title="Supprimer"
+                      title={t('delete')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

@@ -1,0 +1,100 @@
+{
+  "title": "Partages",
+  "tabs": {
+    "given": "Partages donnés",
+    "received": "Partages reçus"
+  },
+  "given": {
+    "title": "Partages donnés",
+    "description": "Utilisateurs à qui vous avez donné accès à vos tâches",
+    "noShares": "Aucun partage donné",
+    "noSharesDescription": "Invitez quelqu'un pour lui donner accès à vos tâches",
+    "invite": "Inviter",
+    "searchUser": "Rechercher un utilisateur...",
+    "searchPlaceholder": "Email ou nom d'utilisateur",
+    "permissions": "Permissions",
+    "hiddenCategories": "Catégories masquées",
+    "hiddenCategoriesHint": "Ces catégories ne seront pas visibles par le délégué",
+    "pending": "En attente",
+    "accepted": "Accepté",
+    "revoke": "Révoquer l'accès",
+    "update": "Mettre à jour"
+  },
+  "received": {
+    "title": "Partages reçus",
+    "description": "Utilisateurs qui vous ont donné accès à leurs tâches",
+    "noShares": "Aucun partage reçu",
+    "noSharesDescription": "Vous n'avez reçu aucune invitation de partage",
+    "pending": "Invitations en attente",
+    "active": "Partages actifs",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "leave": "Quitter"
+  },
+  "permissions": {
+    "label": "Droits",
+    "canCreate": "Créer des tâches",
+    "canEdit": "Modifier des tâches",
+    "canDelete": "Supprimer des tâches",
+    "canCreateCategories": "Créer des catégories"
+  },
+  "context": {
+    "title": "Contexte",
+    "self": "Mes tâches",
+    "myTasks": "Mes tâches",
+    "myTasksDescription": "Vos tâches personnelles",
+    "tasksOf": "Tâches de {{name}}",
+    "owner": "Gestion des tâches de <1>{{name}}</1>",
+    "switch": "Changer de contexte",
+    "permissions": "Vos permissions",
+    "setDefault": "Définir par défaut",
+    "setAsDefault": "Définir comme défaut",
+    "isDefault": "Contexte par défaut",
+    "delegatedTasks": "Tâches déléguées",
+    "noDelegatedTasks": "Aucune tâche déléguée"
+  },
+  "messages": {
+    "inviteSent": "Invitation envoyée avec succès",
+    "inviteAccepted": "Invitation acceptée",
+    "inviteRejected": "Invitation refusée",
+    "accessRevoked": "Accès révoqué",
+    "leftShare": "Vous avez quitté ce partage",
+    "permissionsUpdated": "Permissions mises à jour",
+    "defaultContextUpdated": "Contexte par défaut mis à jour",
+    "error": "Une erreur est survenue",
+    "userNotFound": "Utilisateur non trouvé",
+    "alreadyShared": "Vous partagez déjà vos tâches avec cet utilisateur",
+    "cannotShareSelf": "Vous ne pouvez pas partager avec vous-même"
+  },
+  "confirm": {
+    "revoke": "Êtes-vous sûr de vouloir révoquer l'accès de {{name}} à vos tâches ?",
+    "leave": "Êtes-vous sûr de vouloir quitter ce partage ? Vous n'aurez plus accès aux tâches de {{name}}.",
+    "reject": "Refuser l'invitation de {{name}} ?",
+    "leaveGeneric": "Êtes-vous sûr de vouloir quitter ce partage ?",
+    "deleteShare": "Êtes-vous sûr de vouloir révoquer cet accès ?"
+  },
+  "sendInvite": "Envoyer l'invitation",
+  "edit": {
+    "canCreateTasks": "Peut créer des tâches",
+    "canEditTasks": "Peut modifier des tâches",
+    "canDeleteTasks": "Peut supprimer des tâches",
+    "canCreateCategories": "Peut créer des catégories",
+    "hiddenCategories": "Catégories à masquer :",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "display": {
+    "permissions": "Permissions :",
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "categories": "Catégories",
+    "hiddenCategories": "{{count}} catégorie(s) masquée(s)",
+    "active": "Actif"
+  },
+  "actions": {
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "leave": "Quitter"
+  }
+}

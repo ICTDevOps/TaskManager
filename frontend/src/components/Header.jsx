@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../hooks/useTheme';
-import { CheckSquare, Sun, Moon, LogOut, ChevronDown, Tag, Settings, User, Users, History, Bell } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '../hooks/useAuth'
+import { useTheme } from '../hooks/useTheme'
+import { CheckSquare, Sun, Moon, LogOut, ChevronDown, Tag, Settings, User, Users, History, Bell } from 'lucide-react'
+import LanguageSelector from './LanguageSelector'
 
 export default function Header({
   stats,
@@ -13,10 +15,11 @@ export default function Header({
   currentContext,
   currentOwnerName
 }) {
-  const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const { t } = useTranslation(['common', 'tasks', 'delegation', 'categories', 'settings', 'activity', 'auth'])
+  const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -47,7 +50,7 @@ export default function Header({
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-full">
               <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               <span className="text-sm text-blue-700 dark:text-blue-300">
-                Gestion des tâches de <span className="font-medium">{currentOwnerName}</span>
+                {t('delegation:context.owner', { name: currentOwnerName })}
               </span>
             </div>
           )}
@@ -56,15 +59,15 @@ export default function Header({
           {stats && !isManagingOther && (
             <div className="hidden md:flex items-center gap-6 text-sm">
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 dark:text-gray-400">Actives:</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('tasks:stats.active')}:</span>
                 <span className="font-semibold text-primary">{stats.active_tasks}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 dark:text-gray-400">Complétées:</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('tasks:stats.completed')}:</span>
                 <span className="font-semibold text-green-500">{stats.completed_tasks}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 dark:text-gray-400">Taux:</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('tasks:stats.rate')}:</span>
                 <span className="font-semibold text-gray-900 dark:text-white">{stats.completion_rate}%</span>
               </div>
             </div>
@@ -76,7 +79,7 @@ export default function Header({
             <button
               onClick={onOpenSharing}
               className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-              title="Partages"
+              title={t('delegation:title')}
             >
               <Users className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               {pendingInvitations > 0 && (
@@ -90,7 +93,7 @@ export default function Header({
             <button
               onClick={onOpenActivityLog}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-              title="Journal d'activité"
+              title={t('activity:title')}
             >
               <History className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
@@ -99,16 +102,19 @@ export default function Header({
             <button
               onClick={onOpenCategories}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-              title="Gérer les catégories"
+              title={t('categories:manage')}
             >
               <Tag className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
+
+            {/* Language selector */}
+            <LanguageSelector />
 
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-              title={theme === 'light' ? 'Activer le mode sombre' : 'Activer le mode clair'}
+              title={theme === 'light' ? t('common:theme.dark') : t('common:theme.light')}
             >
               {theme === 'light' ? (
                 <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
@@ -144,23 +150,23 @@ export default function Header({
                   </div>
                   <button
                     onClick={() => {
-                      setMenuOpen(false);
-                      onOpenSettings();
+                      setMenuOpen(false)
+                      onOpenSettings()
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <User className="h-4 w-4" />
-                    Paramètres du compte
+                    {t('settings:title')}
                   </button>
                   <button
                     onClick={() => {
-                      setMenuOpen(false);
-                      onOpenSharing();
+                      setMenuOpen(false)
+                      onOpenSharing()
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <Users className="h-4 w-4" />
-                    Partages
+                    {t('delegation:title')}
                     {pendingInvitations > 0 && (
                       <span className="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                         {pendingInvitations}
@@ -169,30 +175,30 @@ export default function Header({
                   </button>
                   <button
                     onClick={() => {
-                      setMenuOpen(false);
-                      onOpenActivityLog();
+                      setMenuOpen(false)
+                      onOpenActivityLog()
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <History className="h-4 w-4" />
-                    Journal d'activité
+                    {t('activity:title')}
                   </button>
                   <button
                     onClick={() => {
-                      setMenuOpen(false);
-                      onOpenCategories();
+                      setMenuOpen(false)
+                      onOpenCategories()
                     }}
                     className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <Settings className="h-4 w-4" />
-                    Gérer les catégories
+                    {t('categories:manage')}
                   </button>
                   <button
                     onClick={logout}
                     className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                   >
                     <LogOut className="h-4 w-4" />
-                    Déconnexion
+                    {t('auth:logout')}
                   </button>
                 </div>
               )}

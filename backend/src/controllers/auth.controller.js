@@ -58,6 +58,7 @@ const register = async (req, res, next) => {
         firstName: true,
         lastName: true,
         themePreference: true,
+        language: true,
         createdAt: true
       }
     });
@@ -115,6 +116,7 @@ const login = async (req, res, next) => {
         firstName: user.firstName,
         lastName: user.lastName,
         themePreference: user.themePreference,
+        language: user.language,
         role: user.role,
         mustChangePassword: user.mustChangePassword,
         defaultContext: user.defaultContext,
@@ -133,14 +135,15 @@ const me = async (req, res) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-    const { firstName, lastName, themePreference } = req.body;
+    const { firstName, lastName, themePreference, language } = req.body;
 
     const user = await prisma.user.update({
       where: { id: req.user.id },
       data: {
         ...(firstName !== undefined && { firstName }),
         ...(lastName !== undefined && { lastName }),
-        ...(themePreference && { themePreference })
+        ...(themePreference && { themePreference }),
+        ...(language && { language })
       },
       select: {
         id: true,
@@ -148,7 +151,8 @@ const updateProfile = async (req, res, next) => {
         username: true,
         firstName: true,
         lastName: true,
-        themePreference: true
+        themePreference: true,
+        language: true
       }
     });
 

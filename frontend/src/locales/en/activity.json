@@ -1,0 +1,45 @@
+{
+  "title": "Activity log",
+  "noActivity": "No activity",
+  "noActivityDescription": "Actions on your tasks will appear here",
+  "loadMore": "Load more",
+  "loading": "Loading...",
+  "actions": {
+    "created_task": "created task",
+    "updated_task": "updated task",
+    "deleted_task": "deleted task",
+    "completed_task": "completed task",
+    "reopened_task": "reopened task",
+    "created_category": "created category",
+    "updated_category": "updated category",
+    "deleted_category": "deleted category"
+  },
+  "actors": {
+    "you": "You",
+    "forYou": "for you",
+    "forOwner": "for {{name}}"
+  },
+  "filters": {
+    "all": "All",
+    "tasks": "Tasks",
+    "categories": "Categories"
+  },
+  "filter": {
+    "all": "All actions",
+    "tasks": "Tasks only",
+    "categories": "Categories only"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "pagination": {
+    "page": "Page {{current}} of {{total}}"
+  },
+  "refresh": "Refresh",
+  "error": "Error loading activity"
+}

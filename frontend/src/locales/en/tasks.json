@@ -1,0 +1,119 @@
+{
+  "title": "My tasks",
+  "titleFor": "Tasks of {{name}}",
+  "create": "New task",
+  "edit": "Edit task",
+  "delete": "Delete task",
+  "complete": "Complete",
+  "reopen": "Reopen",
+  "noTasks": "No tasks",
+  "noTasksDescription": "Create your first task to get started",
+  "noResults": "No results",
+  "noResultsDescription": "No tasks match your search criteria",
+  "clearFilters": "Clear filters",
+  "form": {
+    "title": "Title",
+    "titlePlaceholder": "Task title",
+    "titleRequired": "Title is required",
+    "description": "Description",
+    "descriptionPlaceholder": "Task description (optional)",
+    "category": "Category",
+    "categoryNone": "No category",
+    "importance": "Importance",
+    "dueDate": "Due date",
+    "dueTime": "Time",
+    "createButton": "Create task",
+    "updateButton": "Update task"
+  },
+  "importance": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High"
+  },
+  "status": {
+    "all": "All",
+    "active": "Active",
+    "completed": "Completed"
+  },
+  "sort": {
+    "label": "Sort by",
+    "createdAt": "Creation date",
+    "dueDate": "Due date",
+    "importance": "Importance",
+    "title": "Title",
+    "asc": "Ascending",
+    "desc": "Descending"
+  },
+  "filter": {
+    "search": "Search tasks...",
+    "status": "Status",
+    "importance": "Importance",
+    "category": "Category",
+    "allCategories": "All categories",
+    "allImportance": "All"
+  },
+  "stats": {
+    "active": "Active",
+    "completed": "Completed",
+    "total": "total",
+    "rate": "Rate"
+  },
+  "export": {
+    "title": "Export",
+    "json": "JSON",
+    "xml": "XML",
+    "success": "Export downloaded",
+    "error": "Export error"
+  },
+  "import": {
+    "title": "Import tasks",
+    "selectFile": "Select a file",
+    "selectFileDescription": "Accepted formats: JSON, XML",
+    "dropzone": "Drop a file here or click to select",
+    "analyzing": "Analyzing file...",
+    "preview": "Import preview",
+    "taskCount": "{{count}} task(s) found",
+    "duplicates": "{{count}} duplicate(s) detected",
+    "duplicateHandling": "Duplicate handling",
+    "skip": "Skip",
+    "overwrite": "Overwrite",
+    "importButton": "Import",
+    "importing": "Importing...",
+    "success": "Import completed successfully",
+    "successFor": "Import completed for {{username}}",
+    "error": "Import error",
+    "fileError": "Error reading file",
+    "invalidFormat": "Invalid file format",
+    "noTasks": "No tasks to import"
+  },
+  "messages": {
+    "created": "Task created successfully",
+    "updated": "Task updated successfully",
+    "deleted": "Task deleted",
+    "completed": "Task completed",
+    "reopened": "Task reopened",
+    "createError": "Error creating task",
+    "updateError": "Error updating task",
+    "deleteError": "Error deleting task",
+    "loadError": "Error loading tasks"
+  },
+  "confirm": {
+    "delete": "Are you sure you want to delete this task?",
+    "deleteTitle": "Delete task"
+  },
+  "permissions": {
+    "canCreate": "Create",
+    "canEdit": "Edit",
+    "canDelete": "Delete",
+    "canCreateCategories": "Categories",
+    "noCreate": "You don't have permission to create tasks",
+    "noEdit": "You don't have permission to edit tasks",
+    "noDelete": "You don't have permission to delete tasks"
+  },
+  "dueDate": {
+    "overdue": "Overdue",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "noDueDate": "No due date"
+  }
+}

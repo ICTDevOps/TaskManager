@@ -1,0 +1,124 @@
+{
+  "title": "Administration",
+  "backToApp": "Back to application",
+  "logout": "Logout",
+  "tabs": {
+    "dashboard": "Dashboard",
+    "users": "Users"
+  },
+  "filters": {
+    "allRoles": "All roles",
+    "users": "Users",
+    "admins": "Administrators",
+    "allStatuses": "All statuses",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "stats": {
+    "title": "Statistics",
+    "totalUsers": "Users",
+    "activeUsers": "Active",
+    "totalTasks": "Total tasks",
+    "completedTasks": "Completed",
+    "completionRate": "Completion rate",
+    "categories": "Categories",
+    "activeInactive": "{{active}} active, {{inactive}} inactive",
+    "activeCompleted": "{{active}} active, {{completed}} completed"
+  },
+  "topUsers": {
+    "title": "Top users by task count",
+    "taskCount": "{{count}} tasks"
+  },
+  "users": {
+    "title": "User management",
+    "search": "Search user...",
+    "table": {
+      "user": "User",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "tasks": "Tasks",
+      "apiAccess": "API",
+      "created": "Registered",
+      "lastLogin": "Last login",
+      "actions": "Actions"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "User"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "apiAccess": {
+      "enabled": "Active",
+      "disabled": "Inactive",
+      "enable": "Enable API access",
+      "disable": "Disable API access"
+    },
+    "actions": {
+      "view": "View details",
+      "edit": "Edit",
+      "changePassword": "Change password",
+      "exportTasks": "Export tasks",
+      "importTasks": "Import tasks",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "promoteAdmin": "Promote to admin",
+      "demoteAdmin": "Demote to user",
+      "delete": "Delete"
+    },
+    "noUsers": "No users found",
+    "protected": "Protected"
+  },
+  "modals": {
+    "changePassword": {
+      "title": "Change password",
+      "subtitle": "Set a new password for",
+      "newPassword": "New password",
+      "newPasswordPlaceholder": "Minimum 6 characters",
+      "confirmPassword": "Confirm password",
+      "forceChange": "Force change on next login",
+      "submit": "Change",
+      "submitting": "Changing...",
+      "cancel": "Cancel",
+      "success": "Password changed",
+      "error": "Error changing password",
+      "minLength": "Password must be at least 6 characters"
+    },
+    "deleteUser": {
+      "title": "Delete user",
+      "message": "Are you sure you want to delete user",
+      "warning": "This action is irreversible and will delete all their tasks and categories.",
+      "exportFirst": "Export tasks before deletion",
+      "submit": "Delete",
+      "submitting": "Deleting...",
+      "cancel": "Cancel",
+      "success": "User deleted",
+      "error": "Error deleting user"
+    },
+    "userDetails": {
+      "title": "User details",
+      "info": "Information",
+      "stats": "Statistics",
+      "tasksActive": "Active tasks",
+      "tasksCompleted": "Completed tasks",
+      "categories": "Categories"
+    }
+  },
+  "messages": {
+    "roleUpdated": "Role updated",
+    "userActivated": "User activated",
+    "userDeactivated": "User deactivated",
+    "apiAccessEnabled": "API access enabled",
+    "apiAccessDisabled": "API access disabled",
+    "exportSuccess": "Export downloaded",
+    "exportError": "Error during export",
+    "importSuccess": "Import completed for {{username}}",
+    "cannotModifySelf": "You cannot modify your own account",
+    "cannotDeleteAdmin": "Cannot delete main admin account",
+    "loadError": "Error loading data",
+    "error": "Error"
+  }
+}

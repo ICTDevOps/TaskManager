@@ -1,0 +1,92 @@
+{
+  "title": "Account settings",
+  "tabs": {
+    "profile": "Profile",
+    "email": "Email",
+    "password": "Password",
+    "preferences": "Preferences",
+    "apiTokens": "API Tokens"
+  },
+  "profile": {
+    "title": "Personal information",
+    "firstName": "First name",
+    "firstNamePlaceholder": "Your first name",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "Your last name",
+    "username": "Username",
+    "usernameHint": "Username cannot be changed",
+    "save": "Save profile",
+    "success": "Profile updated successfully",
+    "error": "Error updating profile"
+  },
+  "email": {
+    "title": "Change email",
+    "current": "Current email",
+    "new": "New email",
+    "newPlaceholder": "new@email.com",
+    "password": "Current password",
+    "passwordPlaceholder": "To confirm the change",
+    "passwordHint": "Enter your password to confirm",
+    "save": "Change email",
+    "success": "Email updated successfully",
+    "error": "Error changing email"
+  },
+  "password": {
+    "title": "Change password",
+    "current": "Current password",
+    "currentPlaceholder": "Your current password",
+    "new": "New password",
+    "newPlaceholder": "Minimum 6 characters",
+    "confirm": "Confirm new password",
+    "confirmPlaceholder": "Retype new password",
+    "save": "Change password",
+    "success": "Password updated successfully",
+    "error": "Error changing password",
+    "validation": {
+      "currentRequired": "Current password required",
+      "newMin": "New password must be at least 6 characters",
+      "mismatch": "Passwords don't match"
+    }
+  },
+  "preferences": {
+    "title": "Preferences",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "language": "Language",
+    "defaultContext": "Default context",
+    "defaultContextSelf": "My tasks",
+    "defaultContextHint": "Context displayed on login",
+    "success": "Preferences saved",
+    "error": "Error saving preferences"
+  },
+  "tokens": {
+    "title": "API Tokens (Personal Access Tokens)",
+    "description": "Create tokens to access the API from third-party applications (N8N, AI agents, etc.)",
+    "noAccess": "API access is not enabled for your account. Contact an administrator.",
+    "create": "Create token",
+    "name": "Token name",
+    "namePlaceholder": "E.g.: My N8N agent",
+    "permissions": "Permissions",
+    "permissionsHint": "Select permissions granted to this token",
+    "canReadTasks": "Read tasks",
+    "canCreateTasks": "Create tasks",
+    "canUpdateTasks": "Update tasks",
+    "canDeleteTasks": "Delete tasks",
+    "canReadCategories": "Read categories",
+    "canCreateCategories": "Create categories",
+    "createButton": "Create token",
+    "copyToken": "Copy token",
+    "tokenCopied": "Token copied!",
+    "tokenWarning": "Warning: this token will only be displayed once. Copy it now.",
+    "revoke": "Revoke",
+    "revokeConfirm": "Are you sure you want to revoke this token?",
+    "lastUsed": "Last used",
+    "never": "Never",
+    "created": "Token created successfully",
+    "revoked": "Token revoked",
+    "error": "Error creating token",
+    "noTokens": "No API tokens",
+    "noTokensDescription": "Create a token to access the API"
+  }
+}
